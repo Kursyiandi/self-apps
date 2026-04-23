@@ -1,0 +1,22 @@
+{
+  "name": "Self Apps",
+  "short_name": "Self Apps",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#e9ecef",
+  "theme_color": "#4dabf7",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
