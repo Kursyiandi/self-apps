@@ -471,7 +471,13 @@
 
     // --- SUPABASE AUTH ---
     document.getElementById('btnLogin').addEventListener('click', async () => {
-        const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+        const { error } = await supabase.auth.signInWithOAuth({ 
+            provider: 'google',
+            options: {
+                // Baris sakti ini akan otomatis menyesuaikan diri (baik di localhost maupun github pages)
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
         if (error) showToast("Gagal login: " + error.message, "error");
     });
 
