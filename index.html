@@ -161,6 +161,8 @@
         #btnBatalCatatan { display: none; } /* Sembunyikan tombol batal di tampilan PC/Laptop */
         .wadah-input-pengeluaran { width: 100%; margin-bottom: 15px; }
         #btnBatalPengeluaran { display: none; } /* Sembunyikan Batal di PC */
+        .wadah-input-akun { display: flex; flex-direction: column; width: 100%; margin-bottom: 15px; }
+        #btnBatalAkun { display: none; } /* Sembunyikan Batal di PC */
 
         @media (max-width: 500px) {
             body { padding: 10px; padding-bottom: 90px; } 
@@ -303,6 +305,24 @@
                 flex: 3; /* Proporsi 3/4 bagian */
                 width: auto;
             }
+
+            /* -- 8. UX AKUN MOBILE -- */
+            #wadahInputAkun { display: none; } 
+            #wadahInputAkun.tampil { display: flex; animation: slideDownFade 0.3s ease-out; }
+            #btnBatalAkun {
+                display: block; 
+                flex: 1; 
+                background: #ffe3e3;
+                color: #c92a2a;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            #wadahInputAkun .btn-simpan {
+                flex: 3; 
+                width: auto;
+            }
             
             }
             .judul-bulanan {
@@ -437,13 +457,23 @@
                         <span>PIN Master</span>
                         <input type="password" id="inputPinMaster" class="input-pin-master" placeholder="" title="Kunci Rahasia Anda">
                     </div>
-                    <div class="input-group">
-                        <input type="text" id="inputNamaPlatform" placeholder="Platform">
-                        <input type="text" id="inputUsername" placeholder="Username / Email">
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="inputPasswordAkun" placeholder="Masukkan Password Akun">
-                        <button id="btnSimpanAkun" class="btn-simpan" style="background-color:#20c997;">Simpan Terenkripsi</button>
+
+                    <!-- 🔴 TOMBOL TAMBAH KHUSUS MOBILE (Aksen Hijau) -->
+                    <button id="btnTambahAkun" class="btn-tambah-mobile" style="color: #087f5b; background: #e6fcf5; border-color: #20c997;">➕ Tambah Akun Baru</button>
+                    
+                    <!-- 🔴 WADAH INPUT & TOMBOL -->
+                    <div id="wadahInputAkun" class="wadah-input-akun">
+                        <div class="input-group" style="margin-bottom: 10px;">
+                            <input type="text" id="inputNamaPlatform" placeholder="Platform">
+                            <input type="text" id="inputUsername" placeholder="Username / Email">
+                        </div>
+                        <div class="input-group" style="margin-bottom: 15px;">
+                            <input type="password" id="inputPasswordAkun" placeholder="Masukkan Password Akun">
+                        </div>
+                        <div class="grup-tombol-simpan">
+                            <button id="btnBatalAkun">Batal</button>
+                            <button id="btnSimpanAkun" class="btn-simpan" style="background-color:#20c997;">Simpan Terenkripsi</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -910,6 +940,27 @@
         document.getElementById('inputNominalPengeluaran').value = ""; // Kosongkan
     });
 
+    // --- LOGIKA TOMBOL TAMBAH AKUN MOBILE ---
+    const btnTambahAkun = document.getElementById('btnTambahAkun');
+    const wadahInputAkun = document.getElementById('wadahInputAkun');
+    const btnBatalAkun = document.getElementById('btnBatalAkun');
+
+    // 1. Saat tombol ➕ diklik
+    btnTambahAkun.addEventListener('click', () => {
+        wadahInputAkun.classList.add('tampil');
+        btnTambahAkun.style.display = 'none'; // Sembunyikan tombol ➕
+        document.getElementById('inputNamaPlatform').focus(); // Otomatis arahkan ke Platform
+    });
+
+    // 2. Saat tombol Batal diklik
+    btnBatalAkun.addEventListener('click', () => {
+        wadahInputAkun.classList.remove('tampil'); // Lipat form
+        btnTambahAkun.style.display = 'block'; // Munculkan kembali tombol ➕
+        document.getElementById('inputNamaPlatform').value = ""; // Kosongkan form
+        document.getElementById('inputUsername').value = ""; 
+        document.getElementById('inputPasswordAkun').value = ""; 
+    });
+
     // --- WEB SPEECH API ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const btnSuara = document.getElementById('btnSuaraCatatan');
@@ -1029,6 +1080,11 @@
                 document.getElementById('inputUsername').value = ""; 
                 document.getElementById('inputPasswordAkun').value = "";
                 showToast("Akun dikunci & disimpan!", "success");
+                // Reset UI Mobile jika form sedang terbuka
+                if (window.innerWidth <= 500 && wadahInputAkun.classList.contains('tampil')) {
+                    wadahInputAkun.classList.remove('tampil');
+                    btnTambahAkun.style.display = 'block';
+                }
                 
                 // 2. PERFORMA: Suntik data langsung
                 dataAkunPribadi.unshift(data[0]);
