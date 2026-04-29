@@ -972,32 +972,62 @@
     // --- WEB SPEECH API ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const btnSuara = document.getElementById('btnSuaraCatatan');
+    
     if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.lang = 'id-ID'; recognition.interimResults = false;
         
         btnSuara.addEventListener('click', () => {
+            const wadahInputCatatan = document.getElementById('wadahInputCatatan');
+            const btnTambahCatatan = document.getElementById('btnTambahCatatan');
+
             if (btnSuara.classList.contains('merekam')) {
-                // 1. BUG FIX: Paksa reset UI langsung saat ditekan untuk batal
+                // 1. LOGIKA BATAL (Mic dimatikan manual)
                 recognition.stop();
                 btnSuara.classList.remove('merekam'); 
                 btnSuara.innerText = "🎤";
                 showToast("Batal merekam", "normal");
+
+                // 🔴 TAMBAHAN: Ikut sembunyikan form jika mic dibatalkan
+                if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil')) {
+                    wadahInputCatatan.classList.remove('tampil');
+                    btnTambahCatatan.style.display = 'block';
+                    // Reset tampilan tombol tambah ke semula (Biru)
+                    btnTambahCatatan.innerHTML = "➕ Buat Catatan Baru";
+                    btnTambahCatatan.style.borderColor = "#4dabf7";
+                    btnTambahCatatan.style.color = "#1864ab";
+                    btnTambahCatatan.style.background = "#e7f5ff";
+                }
             } else { 
+                // 2. LOGIKA MULAI REKAM
                 recognition.start(); 
                 btnSuara.classList.add('merekam'); 
                 btnSuara.innerText = "🔴"; 
                 showToast("Silakan bicara...", "normal"); 
                 
-                // 2. UX BARU: Otomatis buka form jika tombol mic ditekan (khusus HP)
-                const wadahInputCatatan = document.getElementById('wadahInputCatatan');
-                const btnTambahCatatan = document.getElementById('btnTambahCatatan');
+                // Otomatis buka form saat mulai rekam
                 if (window.innerWidth <= 500 && !wadahInputCatatan.classList.contains('tampil')) {
                     wadahInputCatatan.classList.add('tampil');
                     btnTambahCatatan.style.display = 'none';
                 }
             }
         });
+        
+        // ... (sisanya: recognition.onresult, onerror, onend tetap sama seperti sebelumnya)
+        recognition.onresult = (event) => {
+            const hasil = event.results[0][0].transcript;
+            inputCatatan.value = inputCatatan.value ? inputCatatan.value + " " + hasil : hasil;
+            inputCatatan.dispatchEvent(new Event('input'));
+            btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤";
+            showToast("Suara ditangkap!", "success");
+        };
+        
+        recognition.onerror = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+        recognition.onend = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+        
+    } else { 
+        btnSuara.style.display = 'none'; 
+    }
         
         recognition.onresult = (event) => {
             const hasil = event.results[0][0].transcript;
