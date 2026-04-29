@@ -159,6 +159,8 @@
         .wadah-input-catatan { display: flex; flex: 1; gap: 10px; align-items: flex-end; width: 100%; }
         .grup-tombol-simpan { display: flex; gap: 10px; }
         #btnBatalCatatan { display: none; } /* Sembunyikan tombol batal di tampilan PC/Laptop */
+        .wadah-input-pengeluaran { width: 100%; margin-bottom: 15px; }
+        #btnBatalPengeluaran { display: none; } /* Sembunyikan Batal di PC */
 
         @media (max-width: 500px) {
             body { padding: 10px; padding-bottom: 90px; } 
@@ -284,6 +286,24 @@
                 flex: 3; /* Proporsi 3/4 bagian */
                 width: auto; /* Membatalkan lebar 100% sebelumnya */
             }
+            /* -- 7. UX PENGELUARAN MOBILE -- */
+            #wadahInputPengeluaran { display: none; } /* Sembunyi default di HP */
+            #wadahInputPengeluaran.tampil { display: block; animation: slideDownFade 0.3s ease-out; }
+            #btnBatalPengeluaran {
+                display: block; /* Munculkan di HP */
+                flex: 1; /* Proporsi 1/4 bagian */
+                background: #ffe3e3;
+                color: #c92a2a;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            #wadahInputPengeluaran .btn-simpan {
+                flex: 3; /* Proporsi 3/4 bagian */
+                width: auto;
+            }
+            
             }
             .judul-bulanan {
                 flex: 1 1 60% !important; /* Judul ambil sisa ruang di baris atas */
@@ -395,11 +415,21 @@
                             <div id="angkaTotalBulan" class="angka-ringkasan">Rp 0</div>
                         </div>
                     </div>
-                    <div class="input-group">
-                        <input type="text" id="inputNamaPengeluaran" placeholder="Nama Barang (Misal: Kopi)">
-                        <input type="number" id="inputNominalPengeluaran" placeholder="Harga (Misal: 15000)">
+
+                    <!-- 🔴 TOMBOL TAMBAH KHUSUS MOBILE (Aksen Merah) -->
+                    <button id="btnTambahPengeluaran" class="btn-tambah-mobile" style="color: #e03131; background: #fff5f5; border-color: #ff8787;">➕ Catat Pengeluaran Baru</button>
+                    
+                    <!-- 🔴 WADAH INPUT & TOMBOL (Bisa Sembunyi) -->
+                    <div id="wadahInputPengeluaran" class="wadah-input-pengeluaran">
+                        <div class="input-group" style="margin-bottom: 10px;">
+                            <input type="text" id="inputNamaPengeluaran" placeholder="Nama Barang (Misal: Kopi)">
+                            <input type="number" id="inputNominalPengeluaran" placeholder="Harga (Misal: 15000)">
+                        </div>
+                        <div class="grup-tombol-simpan">
+                            <button id="btnBatalPengeluaran">Batal</button>
+                            <button id="btnSimpanPengeluaran" class="btn-simpan" style="background-color:#ff8787;">Catat Pengeluaran</button>
+                        </div>
                     </div>
-                    <button id="btnSimpanPengeluaran" class="btn-simpan" style="background-color:#ff8787;">Catat Pengeluaran</button>
                 </div>
 
                 <div id="halamanAkun" class="bagian-aplikasi">
@@ -860,6 +890,26 @@
         document.getElementById('inputCatatan').style.height = "44px"; // Reset tinggi kotak
     });
 
+    // --- LOGIKA TOMBOL TAMBAH PENGELUARAN MOBILE ---
+    const btnTambahPengeluaran = document.getElementById('btnTambahPengeluaran');
+    const wadahInputPengeluaran = document.getElementById('wadahInputPengeluaran');
+    const btnBatalPengeluaran = document.getElementById('btnBatalPengeluaran');
+
+    // 1. Saat tombol ➕ diklik
+    btnTambahPengeluaran.addEventListener('click', () => {
+        wadahInputPengeluaran.classList.add('tampil');
+        btnTambahPengeluaran.style.display = 'none'; // Sembunyikan tombol ➕
+        document.getElementById('inputNamaPengeluaran').focus(); // Otomatis arahkan keyboard ke Nama
+    });
+
+    // 2. Saat tombol Batal diklik
+    btnBatalPengeluaran.addEventListener('click', () => {
+        wadahInputPengeluaran.classList.remove('tampil'); // Lipat form
+        btnTambahPengeluaran.style.display = 'block'; // Munculkan kembali tombol ➕
+        document.getElementById('inputNamaPengeluaran').value = ""; // Kosongkan
+        document.getElementById('inputNominalPengeluaran').value = ""; // Kosongkan
+    });
+
     // --- WEB SPEECH API ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const btnSuara = document.getElementById('btnSuaraCatatan');
@@ -940,6 +990,11 @@
                 document.getElementById('inputNamaPengeluaran').value = ""; 
                 document.getElementById('inputNominalPengeluaran').value = ""; 
                 showToast("Pengeluaran dicatat!", "success");
+                // Reset UI Mobile jika form sedang terbuka
+                if (window.innerWidth <= 500 && wadahInputPengeluaran.classList.contains('tampil')) {
+                    wadahInputPengeluaran.classList.remove('tampil');
+                    btnTambahPengeluaran.style.display = 'block';
+                }
                 
                 // 2. PERFORMA: Suntik data langsung
                 dataPengeluaranPribadi.unshift(data[0]);
