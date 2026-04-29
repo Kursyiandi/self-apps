@@ -157,6 +157,8 @@
         .toast.success { background-color: #20c997; }
         .btn-tambah-mobile { display: none; } /* Sembunyikan tombol + di Laptop */
         .wadah-input-catatan { display: flex; flex: 1; gap: 10px; align-items: flex-end; width: 100%; }
+        .grup-tombol-simpan { display: flex; gap: 10px; }
+        #btnBatalCatatan { display: none; } /* Sembunyikan tombol batal di tampilan PC/Laptop */
 
         @media (max-width: 500px) {
             body { padding: 10px; padding-bottom: 90px; } 
@@ -263,6 +265,25 @@
                 0% { opacity: 0; transform: translateY(-10px); }
                 100% { opacity: 1; transform: translateY(0); }
             }
+
+            /* -- 6. DESAIN TOMBOL BATAL & SIMPAN BERSEBELAHAN -- */
+            .grup-tombol-simpan {
+                width: 100%;
+            }
+            #btnBatalCatatan {
+                display: block; /* Munculkan khusus di HP */
+                flex: 1; /* Proporsi 1/4 bagian */
+                background: #ffe3e3;
+                color: #c92a2a;
+                border: none;
+                border-radius: 8px;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            #wadahInputCatatan .btn-simpan {
+                flex: 3; /* Proporsi 3/4 bagian */
+                width: auto; /* Membatalkan lebar 100% sebelumnya */
+            }
             }
             .judul-bulanan {
                 flex: 1 1 60% !important; /* Judul ambil sisa ruang di baris atas */
@@ -353,7 +374,12 @@
                         <!-- Wadah untuk menyembunyikan Input & Tombol Simpan -->
                         <div id="wadahInputCatatan" class="wadah-input-catatan">
                             <textarea id="inputCatatan" placeholder="Tulis catatan"></textarea>
-                            <button id="btnSimpanCatatan" class="btn-simpan">Simpan</button>
+                            
+                            <!-- 🔴 KODE BARU: Bungkus tombol agar bersebelahan -->
+                            <div class="grup-tombol-simpan">
+                                <button id="btnBatalCatatan">Batal</button>
+                                <button id="btnSimpanCatatan" class="btn-simpan">Simpan</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -817,23 +843,21 @@
     // --- LOGIKA TOMBOL TAMBAH MOBILE ---
     const btnTambahCatatan = document.getElementById('btnTambahCatatan');
     const wadahInputCatatan = document.getElementById('wadahInputCatatan');
+    const btnBatalCatatan = document.getElementById('btnBatalCatatan');
 
+    // 1. Saat tombol ➕ diklik
     btnTambahCatatan.addEventListener('click', () => {
-        wadahInputCatatan.classList.toggle('tampil');
-        // Jika sedang terbuka, ubah tombol jadi merah (Batal)
-        if(wadahInputCatatan.classList.contains('tampil')) {
-            btnTambahCatatan.innerHTML = "❌ Batal";
-            btnTambahCatatan.style.borderColor = "#fa5252";
-            btnTambahCatatan.style.color = "#c92a2a";
-            btnTambahCatatan.style.background = "#ffe3e3";
-            document.getElementById('inputCatatan').focus(); // Otomatis arahkan keyboard
-        } else {
-            // Jika tertutup, kembalikan ke biru
-            btnTambahCatatan.innerHTML = "➕ Buat Catatan Baru";
-            btnTambahCatatan.style.borderColor = "#4dabf7";
-            btnTambahCatatan.style.color = "#1864ab";
-            btnTambahCatatan.style.background = "#e7f5ff";
-        }
+        wadahInputCatatan.classList.add('tampil');
+        btnTambahCatatan.style.display = 'none'; // Sembunyikan tombol ➕
+        document.getElementById('inputCatatan').focus(); // Otomatis arahkan keyboard
+    });
+
+    // 2. Saat tombol Batal diklik
+    btnBatalCatatan.addEventListener('click', () => {
+        wadahInputCatatan.classList.remove('tampil'); // Lipat kotak input
+        btnTambahCatatan.style.display = 'block'; // Munculkan kembali tombol ➕
+        document.getElementById('inputCatatan').value = ""; // Kosongkan isi ketikan
+        document.getElementById('inputCatatan').style.height = "44px"; // Reset tinggi kotak
     });
 
     // --- WEB SPEECH API ---
@@ -883,7 +907,8 @@
                 showToast("Catatan tersimpan!", "success");
                 // Reset UI Mobile jika form sedang terbuka
                 if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil')) {
-                    btnTambahCatatan.click(); // Otomatis menutup dan reset form
+                    wadahInputCatatan.classList.remove('tampil');
+                    btnTambahCatatan.style.display = 'block';
                 }
                 
                 // 2. PERFORMA: Stop fetchSemuaData(). Cukup suntik data baru ke atas array lokal.
