@@ -155,6 +155,8 @@
         .toast.show { visibility: visible; opacity: 1; bottom: 40px; }
         .toast.error { background-color: #e03131; }
         .toast.success { background-color: #20c997; }
+        .btn-tambah-mobile { display: none; } /* Sembunyikan tombol + di Laptop */
+        .wadah-input-catatan { display: flex; flex: 1; gap: 10px; align-items: flex-end; width: 100%; }
 
         @media (max-width: 500px) {
             body { padding: 10px; padding-bottom: 90px; } 
@@ -212,6 +214,54 @@
                 margin: -25px -15px 20px -15px; /* Ditarik 10px ke atas */
                 border-radius: 12px 12px 0 0; 
                 box-shadow: 0 10px 15px rgba(0,0,0,0.06); 
+            }
+
+            /* -- 5. PERBAIKAN UX CATATAN MOBILE -- */
+            .btn-tambah-mobile {
+                display: block; 
+                width: 100%;
+                padding: 12px;
+                background: #e7f5ff;
+                border: 2px dashed #4dabf7;
+                color: #1864ab;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: bold;
+                text-align: center;
+                cursor: pointer;
+                margin-bottom: 5px;
+                transition: 0.2s;
+            }
+            .wadah-input-catatan {
+                display: none; /* Sembunyikan input default */
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+            .wadah-input-catatan.tampil {
+                display: flex; /* Ditampilkan saat diklik */
+                animation: slideDownFade 0.3s ease-out;
+            }
+            
+            /* EFEK MELAYANG TOMBOL MIC (FAB) */
+            #btnSuaraCatatan {
+                position: fixed;
+                bottom: 90px; /* Jarak aman di atas menu bawah */
+                right: 20px;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                background: white;
+                border: 2px solid #4dabf7;
+                box-shadow: 0 5px 15px rgba(77, 171, 247, 0.3);
+                z-index: 100; /* Agar melayang di atas tulisan */
+                margin: 0;
+                font-size: 24px;
+            }
+
+            @keyframes slideDownFade {
+                0% { opacity: 0; transform: translateY(-10px); }
+                100% { opacity: 1; transform: translateY(0); }
             }
             }
             .judul-bulanan {
@@ -293,10 +343,18 @@
                 </div>
                 
                 <div id="halamanCatatan" class="bagian-aplikasi aktif">
+                    <!-- Tombol Tambah (Hanya akan muncul di HP) -->
+                    <button id="btnTambahCatatan" class="btn-tambah-mobile">➕ Buat Catatan Baru</button>
+                    
                     <div class="input-group">
-                        <button id="btnSuaraCatatan" class="btn-suara" title="Ketikan dengan Suara">🎤</button>
-                        <textarea id="inputCatatan" placeholder="Tulis catatan"></textarea>
-                        <button id="btnSimpanCatatan" class="btn-simpan">Simpan</button>
+                        <!-- Tombol Mic dipisah agar bisa melayang -->
+                        <button id="btnSuaraCatatan" class="btn-suara" title="Ketik dengan Suara">🎤</button>
+                        
+                        <!-- Wadah untuk menyembunyikan Input & Tombol Simpan -->
+                        <div id="wadahInputCatatan" class="wadah-input-catatan">
+                            <textarea id="inputCatatan" placeholder="Tulis catatan"></textarea>
+                            <button id="btnSimpanCatatan" class="btn-simpan">Simpan</button>
+                        </div>
                     </div>
                 </div>
 
@@ -756,6 +814,28 @@
         gambarGrafik(dataDikelompokkan); 
     }
 
+    // --- LOGIKA TOMBOL TAMBAH MOBILE ---
+    const btnTambahCatatan = document.getElementById('btnTambahCatatan');
+    const wadahInputCatatan = document.getElementById('wadahInputCatatan');
+
+    btnTambahCatatan.addEventListener('click', () => {
+        wadahInputCatatan.classList.toggle('tampil');
+        // Jika sedang terbuka, ubah tombol jadi merah (Batal)
+        if(wadahInputCatatan.classList.contains('tampil')) {
+            btnTambahCatatan.innerHTML = "❌ Batal";
+            btnTambahCatatan.style.borderColor = "#fa5252";
+            btnTambahCatatan.style.color = "#c92a2a";
+            btnTambahCatatan.style.background = "#ffe3e3";
+            document.getElementById('inputCatatan').focus(); // Otomatis arahkan keyboard
+        } else {
+            // Jika tertutup, kembalikan ke biru
+            btnTambahCatatan.innerHTML = "➕ Buat Catatan Baru";
+            btnTambahCatatan.style.borderColor = "#4dabf7";
+            btnTambahCatatan.style.color = "#1864ab";
+            btnTambahCatatan.style.background = "#e7f5ff";
+        }
+    });
+
     // --- WEB SPEECH API ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const btnSuara = document.getElementById('btnSuaraCatatan');
@@ -801,6 +881,10 @@
                 inputCatatan.value = ""; inputCatatan.style.height = "44px"; 
                 if (inputCari) inputCari.value = ""; 
                 showToast("Catatan tersimpan!", "success");
+                // Reset UI Mobile jika form sedang terbuka
+                if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil')) {
+                    btnTambahCatatan.click(); // Otomatis menutup dan reset form
+                }
                 
                 // 2. PERFORMA: Stop fetchSemuaData(). Cukup suntik data baru ke atas array lokal.
                 dataCatatanPribadi.unshift(data[0]); 
