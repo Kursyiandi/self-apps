@@ -975,10 +975,30 @@
     if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.lang = 'id-ID'; recognition.interimResults = false;
+        
         btnSuara.addEventListener('click', () => {
-            if (btnSuara.classList.contains('merekam')) recognition.stop();
-            else { recognition.start(); btnSuara.classList.add('merekam'); btnSuara.innerText = "🔴"; showToast("Silakan bicara...", "normal"); }
+            if (btnSuara.classList.contains('merekam')) {
+                // 1. BUG FIX: Paksa reset UI langsung saat ditekan untuk batal
+                recognition.stop();
+                btnSuara.classList.remove('merekam'); 
+                btnSuara.innerText = "🎤";
+                showToast("Batal merekam", "normal");
+            } else { 
+                recognition.start(); 
+                btnSuara.classList.add('merekam'); 
+                btnSuara.innerText = "🔴"; 
+                showToast("Silakan bicara...", "normal"); 
+                
+                // 2. UX BARU: Otomatis buka form jika tombol mic ditekan (khusus HP)
+                const wadahInputCatatan = document.getElementById('wadahInputCatatan');
+                const btnTambahCatatan = document.getElementById('btnTambahCatatan');
+                if (window.innerWidth <= 500 && !wadahInputCatatan.classList.contains('tampil')) {
+                    wadahInputCatatan.classList.add('tampil');
+                    btnTambahCatatan.style.display = 'none';
+                }
+            }
         });
+        
         recognition.onresult = (event) => {
             const hasil = event.results[0][0].transcript;
             inputCatatan.value = inputCatatan.value ? inputCatatan.value + " " + hasil : hasil;
@@ -986,9 +1006,14 @@
             btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤";
             showToast("Suara ditangkap!", "success");
         };
+        
+        // 3. PENGAMAN EKSTRA: Pastikan tombol kembali ke 🎤 apapun yang terjadi
         recognition.onerror = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
-        recognition.onspeechend = () => { recognition.stop(); btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
-    } else { btnSuara.style.display = 'none'; }
+        recognition.onend = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+        
+    } else { 
+        btnSuara.style.display = 'none'; 
+    }
 
     // --- SIMPAN (INSERT) DENGAN PELACAK SUPER ---
     // --- SIMPAN CATATAN DENGAN PERFORMA TINGGI ---
