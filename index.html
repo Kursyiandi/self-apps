@@ -329,7 +329,7 @@
                 bottom: 80px; /* Posisi awal saat bersembunyi dinaikkan */
             }
             .toast.show {
-                bottom: 100px !important; /* Saat muncul, melayang tepat di atas menu bawah */
+                bottom: 90px !important; /* Saat muncul, melayang tepat di atas menu bawah */
             }
             
             }
@@ -555,7 +555,7 @@
         toast.className = "toast show"; 
         if (tipe === "error") toast.classList.add("error");
         if (tipe === "success") toast.classList.add("success");
-        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 1500);
     }
 
     function enkripsi(teks, pin) { return CryptoJS.AES.encrypt(teks, pin).toString(); }
