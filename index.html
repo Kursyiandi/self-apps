@@ -252,7 +252,7 @@
             /* EFEK MELAYANG TOMBOL MIC (FAB) */
             #btnSuaraCatatan {
                 position: fixed;
-                bottom: 90px; /* Jarak aman di atas menu bawah */
+                bottom: 95px; /* Jarak aman di atas menu bawah */
                 right: 20px;
                 width: 60px;
                 height: 60px;
@@ -638,40 +638,34 @@
     });
 
    // --- SUPABASE AUTH (ANTI-DEADLOCK & ANTI-MACET) ---
-    // Hapus kata 'async' di baris bawah ini:
     supabase.auth.onAuthStateChange((event, session) => {
         console.log("🛡️ Status Auth:", event);
 
-        if (event === 'SIGNED_OUT' || (event === 'INITIAL_SESSION' && !session)) {
-            if (window.location.hash.includes('access_token')) {
-                window.history.replaceState(null, document.title, window.location.pathname);
-                location.reload(); 
-            }
-        }
-
         if (session && session.user) {
+            // BERHASIL LOGIN
             currentUser = session.user;
             document.getElementById('areaLogin').style.display = 'none';
             document.getElementById('areaApp').style.display = 'block';
             document.getElementById('infoUser').innerText = `Halo, ${currentUser.user_metadata.full_name || 'Pengguna'}!`;
 
-            if (window.location.hash.includes('access_token')) {
+            // Bersihkan URL dari token rahasia setelah berhasil diamankan
+            if (window.location.hash.includes('access_token') || window.location.hash.includes('error')) {
                 window.history.replaceState(null, document.title, window.location.pathname);
             }
 
             if (!dataSudahDitarikAwal) {
                 dataSudahDitarikAwal = true; 
-                
-                // 🔴 KUNCI UTAMA: Beri jeda 150 milidetik agar Supabase melepas kuncinya!
-                setTimeout(() => {
-                    fetchSemuaData(); 
-                }, 150);
+                setTimeout(() => { fetchSemuaData(); }, 150);
             }
         } else {
-            currentUser = null;
-            dataSudahDitarikAwal = false;
-            document.getElementById('areaLogin').style.display = 'block';
-            document.getElementById('areaApp').style.display = 'none';
+            // BELUM LOGIN
+            // Cegah halaman terlempar ke form login jika URL masih memuat token proses dari Google
+            if (!window.location.hash.includes('access_token')) {
+                currentUser = null;
+                dataSudahDitarikAwal = false;
+                document.getElementById('areaLogin').style.display = 'block';
+                document.getElementById('areaApp').style.display = 'none';
+            }
         }
     });
 
