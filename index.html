@@ -461,15 +461,15 @@
                 </div>
 
                 <div id="halamanAkun" class="bagian-aplikasi">
-                    <div class="box-peringatan">
-                        <span>PIN Master</span>
-                        <input type="password" id="inputPinMaster" class="input-pin-master" placeholder="" title="Kunci Rahasia Anda">
-                    </div>
-
-                    <!-- 🔴 TOMBOL TAMBAH KHUSUS MOBILE (Aksen Hijau) -->
-                    <button id="btnTambahAkun" class="btn-tambah-mobile" style="color: #087f5b; background: #e6fcf5; border-color: #20c997;">➕ Tambah Akun Baru</button>
                     
-                    <!-- 🔴 WADAH INPUT & TOMBOL -->
+                    <div class="box-peringatan" style="flex-direction: row; align-items: flex-end; gap: 10px;">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 5px;">
+                            <span>PIN Master</span>
+                            <input type="password" id="inputPinMaster" class="input-pin-master" placeholder="" title="Kunci Rahasia Anda" style="margin: 0; height: 44px;">
+                        </div>
+                        <button id="btnTambahAkun" class="btn-tambah-mobile" style="width: 55px; height: 44px; flex-shrink: 0; background: #e6fcf5; border: 2px dashed #20c997; color: #087f5b; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; margin: 0; padding: 0;">➕</button>
+                    </div>
+                    
                     <div id="wadahInputAkun" class="wadah-input-akun">
                         <div class="input-group" style="margin-bottom: 10px;">
                             <input type="text" id="inputNamaPlatform" placeholder="Platform">
@@ -963,12 +963,12 @@
     // 2. Saat tombol Batal diklik
     btnBatalAkun.addEventListener('click', () => {
         wadahInputAkun.classList.remove('tampil'); // Lipat form
-        btnTambahAkun.style.display = 'block'; // Munculkan kembali tombol ➕
-        document.getElementById('inputNamaPlatform').value = ""; // Kosongkan form
+        btnTambahAkun.style.display = 'flex'; // 🔴 UBAH DARI 'block' MENJADI 'flex'
+        document.getElementById('inputNamaPlatform').value = ""; 
         document.getElementById('inputUsername').value = ""; 
         document.getElementById('inputPasswordAkun').value = ""; 
     });
-
+    
     // --- WEB SPEECH API ---
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const btnSuara = document.getElementById('btnSuaraCatatan');
@@ -978,11 +978,22 @@
         
         btnSuara.addEventListener('click', () => {
             if (btnSuara.classList.contains('merekam')) {
-                // 1. BUG FIX: Paksa reset UI langsung saat ditekan untuk batal
+                // 1. LOGIKA BATAL (Mic dimatikan manual)
                 recognition.stop();
                 btnSuara.classList.remove('merekam'); 
                 btnSuara.innerText = "🎤";
                 showToast("Batal merekam", "normal");
+
+                // 🔴 TERAPKAN SARAN: Hanya sembunyikan form jika teks masih kosong
+                if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil') && inputCatatan.value.trim() === '') {
+                    wadahInputCatatan.classList.remove('tampil');
+                    btnTambahCatatan.style.display = 'block';
+                    // Reset tampilan tombol tambah ke semula (Biru)
+                    btnTambahCatatan.innerHTML = "➕ Buat Catatan Baru";
+                    btnTambahCatatan.style.borderColor = "#4dabf7";
+                    btnTambahCatatan.style.color = "#1864ab";
+                    btnTambahCatatan.style.background = "#e7f5ff";
+                }
             } else { 
                 recognition.start(); 
                 btnSuara.classList.add('merekam'); 
@@ -1116,7 +1127,7 @@
                 // Reset UI Mobile jika form sedang terbuka
                 if (window.innerWidth <= 500 && wadahInputAkun.classList.contains('tampil')) {
                     wadahInputAkun.classList.remove('tampil');
-                    btnTambahAkun.style.display = 'block';
+                    btnTambahAkun.style.display = 'flex'; // 🔴 UBAH DARI 'block' MENJADI 'flex'
                 }
                 
                 // 2. PERFORMA: Suntik data langsung
