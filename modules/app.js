@@ -8,6 +8,7 @@ import { simpanCatatan, hapusCatatan, updateCatatan } from './catatan.js';
 import { simpanPengeluaran, hapusPengeluaran } from './pengeluaran.js';
 import { simpanAkun, hapusAkun } from './akun.js';
 import { dekripsi, showToast } from './helper.js';
+import { updateDropdownBulan, renderLayarBulanan, downloadPDF } from './rekap.js';
 
 // 1. Inisialisasi Tanggal Hari Ini
 const inputTanggal = document.getElementById('inputTanggalPilih');
@@ -191,3 +192,126 @@ document.getElementById('btnSimpanEdit').addEventListener('click', async () => {
         }
     }
 });
+
+// ==========================================
+// EVENT LISTENER: REKAP & GRAFIK (BULANAN)
+// ==========================================
+const areaUtama = document.getElementById('areaUtama');
+const areaBulanan = document.getElementById('areaBulanan');
+
+document.getElementById('btnBukaSebulan').addEventListener('click', () => {
+    areaUtama.style.display = 'none'; 
+    areaBulanan.style.display = 'block';
+    updateDropdownBulan(document.getElementById('inputTanggalPilih').value); 
+    document.getElementById('inputBulanRekap').value = document.getElementById('inputTanggalPilih').value.substring(0, 7); 
+    renderLayarBulanan();
+});
+
+document.getElementById('inputBulanRekap').addEventListener('change', renderLayarBulanan);
+document.getElementById('btnKembali').addEventListener('click', () => { areaBulanan.style.display = 'none'; areaUtama.style.display = 'block'; });
+document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
+
+// ==========================================
+// EVENT LISTENER: UX MOBILE & ANIMASI UI
+// ==========================================
+// 1. Auto Resize Textarea
+function autoResize() {
+    if (this.value === "") { this.style.height = '44px'; return; }
+    this.style.height = '44px'; 
+    this.style.height = (this.scrollHeight + 2) + 'px'; 
+}
+document.getElementById('inputCatatan').addEventListener('input', autoResize);
+document.getElementById('inputEditCatatan').addEventListener('input', autoResize);
+
+// 2. Mobile Toggles (Tombol +)
+const btnTambahCatatan = document.getElementById('btnTambahCatatan');
+const wadahInputCatatan = document.getElementById('wadahInputCatatan');
+btnTambahCatatan.addEventListener('click', () => {
+    wadahInputCatatan.classList.add('tampil');
+    btnTambahCatatan.style.display = 'none';
+    document.getElementById('inputCatatan').focus();
+});
+document.getElementById('btnBatalCatatan').addEventListener('click', () => {
+    wadahInputCatatan.classList.remove('tampil');
+    btnTambahCatatan.style.display = 'block';
+    document.getElementById('inputCatatan').value = ""; 
+    document.getElementById('inputCatatan').style.height = "44px"; 
+});
+
+const btnTambahPengeluaran = document.getElementById('btnTambahPengeluaran');
+const wadahInputPengeluaran = document.getElementById('wadahInputPengeluaran');
+btnTambahPengeluaran.addEventListener('click', () => {
+    wadahInputPengeluaran.classList.add('tampil');
+    btnTambahPengeluaran.style.display = 'none';
+    document.getElementById('inputNamaPengeluaran').focus();
+});
+document.getElementById('btnBatalPengeluaran').addEventListener('click', () => {
+    wadahInputPengeluaran.classList.remove('tampil');
+    btnTambahPengeluaran.style.display = 'block';
+    document.getElementById('inputNamaPengeluaran').value = ""; 
+    document.getElementById('inputNominalPengeluaran').value = ""; 
+});
+
+const btnTambahAkun = document.getElementById('btnTambahAkun');
+const wadahInputAkun = document.getElementById('wadahInputAkun');
+btnTambahAkun.addEventListener('click', () => {
+    wadahInputAkun.classList.add('tampil');
+    btnTambahAkun.style.display = 'none';
+    document.getElementById('inputNamaPlatform').focus();
+});
+document.getElementById('btnBatalAkun').addEventListener('click', () => {
+    wadahInputAkun.classList.remove('tampil');
+    btnTambahAkun.style.display = 'flex'; 
+    document.getElementById('inputNamaPlatform').value = ""; 
+    document.getElementById('inputUsername').value = ""; 
+    document.getElementById('inputPasswordAkun').value = ""; 
+});
+
+// ==========================================
+// EVENT LISTENER: WEB SPEECH API (VOICE NOTE)
+// ==========================================
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const btnSuara = document.getElementById('btnSuaraCatatan');
+const inputCatatan = document.getElementById('inputCatatan');
+
+if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'id-ID'; recognition.interimResults = false;
+    
+    btnSuara.addEventListener('click', () => {
+        if (btnSuara.classList.contains('merekam')) {
+            recognition.stop();
+            btnSuara.classList.remove('merekam'); 
+            btnSuara.innerText = "🎤";
+            showToast("Batal merekam", "normal");
+            
+            if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil') && inputCatatan.value.trim() === '') {
+                wadahInputCatatan.classList.remove('tampil');
+                btnTambahCatatan.style.display = 'block';
+            }
+        } else { 
+            recognition.start(); 
+            btnSuara.classList.add('merekam'); 
+            btnSuara.innerText = "🔴"; 
+            showToast("Silakan bicara...", "normal"); 
+            
+            if (window.innerWidth <= 500 && !wadahInputCatatan.classList.contains('tampil')) {
+                wadahInputCatatan.classList.add('tampil');
+                btnTambahCatatan.style.display = 'none';
+            }
+        }
+    });
+    
+    recognition.onresult = (event) => {
+        const hasil = event.results[0][0].transcript;
+        inputCatatan.value = inputCatatan.value ? inputCatatan.value + " " + hasil : hasil;
+        inputCatatan.dispatchEvent(new Event('input')); // Memicu autoResize
+        btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤";
+        showToast("Suara ditangkap!", "success");
+    };
+    
+    recognition.onerror = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+    recognition.onend = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+} else { 
+    btnSuara.style.display = 'none'; 
+}
