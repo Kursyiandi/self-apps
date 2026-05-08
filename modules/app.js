@@ -59,7 +59,33 @@ document.getElementById('btnMenuCatatan').addEventListener('click', () => gantiT
 document.getElementById('btnMenuPengeluaran').addEventListener('click', () => gantiTab('pengeluaran'));
 document.getElementById('btnMenuAkun').addEventListener('click', () => gantiTab('akun'));
 
-// Event Listener Tanggal & Pencarian
+// ==========================================
+// EVENT LISTENER TANGGAL & PENCARIAN
+// ==========================================
+
+// Fungsi untuk maju/mundur hari
+function ubahTanggalHari(selisih) {
+    const inputTanggal = document.getElementById('inputTanggalPilih');
+    const tgl = inputTanggal.value;
+    if(!tgl) return;
+    
+    const dateObj = new Date(tgl);
+    dateObj.setDate(dateObj.getDate() + selisih);
+    
+    const year = dateObj.getFullYear();
+    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+    const day = String(dateObj.getDate()).padStart(2, '0');
+    
+    inputTanggal.value = `${year}-${month}-${day}`;
+    updateTanggalHeader(); // Update teks judul
+    renderLayarUtama();    // Gambar ulang layar
+}
+
+// Pasang ke tombol < dan >
+document.getElementById('btnPrevTanggal').addEventListener('click', () => ubahTanggalHari(-1));
+document.getElementById('btnNextTanggal').addEventListener('click', () => ubahTanggalHari(1));
+
+// (Ini kode yang sudah ada sebelumnya, biarkan saja)
 inputTanggal.addEventListener('change', () => { 
     updateTanggalHeader(); 
     renderLayarUtama(); 
