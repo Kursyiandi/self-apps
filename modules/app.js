@@ -1,33 +1,64 @@
 import { state } from './store.js';
 import { login, logout, initAuth } from './auth.js';
+import { fetchCatatan } from './catatan.js';
+import { fetchPengeluaran } from './pengeluaran.js';
+import { fetchAkun } from './akun.js';
+import { updateTanggalHeader, gantiTab, renderLayarUtama } from './ui.js';
 
-// 1. Tangkap Elemen HTML yang dibutuhkan
-const areaLogin = document.getElementById('areaLogin');
-const areaApp = document.getElementById('areaApp');
-const infoUser = document.getElementById('infoUser');
-const btnLogin = document.getElementById('btnLogin');
-const btnLogout = document.getElementById('btnLogout');
+// 1. Inisialisasi Tanggal Hari Ini
+const inputTanggal = document.getElementById('inputTanggalPilih');
+const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
+inputTanggal.value = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+updateTanggalHeader(); 
 
-// 2. Pasang Event Listener ke Tombol
-btnLogin.addEventListener('click', login);
-btnLogout.addEventListener('click', logout);
+// 2. Fungsi Utama: Menarik semua data setelah Login
+async function initData() {
+    console.log("Sedang menarik data dari Supabase...");
+    await Promise.all([
+        fetchCatatan(),
+        fetchPengeluaran(),
+        fetchAkun()
+    ]);
+    console.log("Data berhasil ditarik!");
+    renderLayarUtama(); // Gambar data ke layar
+}
 
-// 3. Jalankan Pemantau Autentikasi
+// 3. Menjalankan Pemantau Sesi (Login/Logout)
 initAuth(
-    // A. Blok ini dijalankan jika USER BERHASIL LOGIN
+    // JIKA LOGIN SUKSES
     () => {
-        areaLogin.style.display = 'none';
-        areaApp.style.display = 'block';
-        infoUser.innerText = `Halo, ${state.currentUser.user_metadata.full_name || 'Pengguna'}!`;
+        document.getElementById('areaLogin').style.display = 'none';
+        document.getElementById('areaApp').style.display = 'block';
+        document.getElementById('infoUser').innerText = `Halo, ${state.currentUser.user_metadata.full_name || 'Pengguna'}!`;
         
-        console.log("Sesi aktif! Siap menarik data dari database...");
-        // TODO: Nanti kita panggil fungsi fetchSemuaData() di sini
+        // Mencegah tarik data berulang kali jika status berubah-ubah
+        if (!state.dataSudahDitarikAwal) {
+            state.dataSudahDitarikAwal = true; 
+            setTimeout(() => { initData(); }, 150); // Jeda kecil untuk keamanan Supabase
+        }
     },
-    
-    // B. Blok ini dijalankan jika USER BELUM LOGIN / LOGOUT
+    // JIKA LOGOUT
     () => {
-        areaLogin.style.display = 'block';
-        areaApp.style.display = 'none';
-        infoUser.innerText = "";
+        document.getElementById('areaLogin').style.display = 'block';
+        document.getElementById('areaApp').style.display = 'none';
+        document.getElementById('infoUser').innerText = "";
     }
 );
+
+// 4. Pasang Event Listener Tombol Utama
+document.getElementById('btnLogin').addEventListener('click', login);
+document.getElementById('btnLogout').addEventListener('click', logout);
+
+// Event Listener Tab Menu
+document.getElementById('btnMenuCatatan').addEventListener('click', () => gantiTab('catatan'));
+document.getElementById('btnMenuPengeluaran').addEventListener('click', () => gantiTab('pengeluaran'));
+document.getElementById('btnMenuAkun').addEventListener('click', () => gantiTab('akun'));
+
+// Event Listener Tanggal & Pencarian
+inputTanggal.addEventListener('change', () => { 
+    updateTanggalHeader(); 
+    renderLayarUtama(); 
+});
+document.getElementById('inputCariItem').addEventListener('input', () => {
+    renderLayarUtama();
+});
