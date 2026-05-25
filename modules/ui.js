@@ -110,13 +110,17 @@ export function renderLayarUtama() {
                 jumlahTampil++;
                 htmlAkun += `
                     <li class="item-akun">
-                        <div class="header-kartu">
-                            <div class="waktu-teks" style="font-weight:bold; color:#20c997; font-size:14px;">💻 ${bersihkanTeks(p)}</div>
-                            <div class="grup-tombol-kecil">
+                        <div class="header-kartu" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                            
+                            <div style="font-weight:bold; color:#20c997; font-size:14px; flex: 1; min-width: 0; word-break: break-all; margin-right: 10px;">💻 ${bersihkanTeks(p)}</div>
+                            
+                            <div class="grup-tombol-kecil" style="flex-shrink: 0;">
                                 <button class="btn-aksi btn-hapus" data-id="${data.id}" data-jenis="akun" title="Hapus">🗑️</button>
                             </div>
                         </div>
-                            <div class="teks-username-akun" title="${bersihkanTeks(u)}">👤 ${bersihkanTeks(u)}</div>
+                        
+                        <div class="teks-username-akun" title="${bersihkanTeks(u)}">👤 ${bersihkanTeks(u)}</div>
+                        
                         <div style="display:flex; justify-content:space-between; align-items:center; background:#f8f9fa; padding:8px 10px; border-radius:6px; border:1px solid #ced4da; margin-top:8px;">
                             <span class="teks-rahasia" style="font-family:monospace; letter-spacing:3px; color:#868e96; font-size:16px;">••••••••</span>
                             <div style="display:flex; gap:5px;">
@@ -127,6 +131,6 @@ export function renderLayarUtama() {
                     </li>`;
             }
         });
-        daftarItem.innerHTML = jumlahTampil === 0 ? (kataKunci !== "" ? `<div class='pesan-kosong'>Pencarian tidak ditemukan.</div>` : `<div class='pesan-kosong'>Belum ada akun yang tersimpan.</div>`) : htmlAkun;
+        el.daftarItem.innerHTML = jumlahTampil === 0 ? (kataKunci !== "" ? `<div class='pesan-kosong'>Pencarian tidak ditemukan.</div>` : `<div class='pesan-kosong'>Belum ada akun yang tersimpan.</div>`) : htmlAkun;
     }
 }
