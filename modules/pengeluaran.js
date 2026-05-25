@@ -8,18 +8,20 @@ export async function fetchPengeluaran() {
     state.dataPengeluaranPribadi = data || [];
 }
 
-export async function simpanPengeluaran(nama, nominal, tgl) {
+export async function simpanPengeluaran(nama, nominal, kategori, tgl) {
     if (!nama || !nominal) { showToast("Isi Nama & Harga dengan benar!", "error"); return false; }
     if (!navigator.onLine) { showToast("Tidak ada koneksi internet!", "error"); return false; }
 
     const { data, error } = await supabase.from('pengeluaran_pribadi').insert([{
         user_id: state.currentUser.id, 
         nama_item: nama, 
-        harga: Number(nominal),
-        kategori: kategori, 
+        harga: Number(nominal), 
+        kategori: kategori, // <--- Sekarang sistem sudah tahu dari mana 'kategori' ini berasal
         tanggal_db: tgl, 
         jam_input: formatWaktuDetail()
     }]).select();
+    
+    // ... sisa kode di bawahnya biarkan saja
 
     if (error) { 
         showToast(`Gagal: ${error.message}`, "error"); return false;

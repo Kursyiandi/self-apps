@@ -3,6 +3,7 @@ import { formatRupiah, bersihkanTeks, showToast } from './helper.js';
 import { el } from './dom.js'; // Gunakan DOM
 
 let chartPengeluaran = null;
+let chartKategori = null;
 
 // 1. Fungsi Dropdown Pintar
 export function updateDropdownBulan(tanggalPilih) {
@@ -68,31 +69,68 @@ export function renderLayarBulanan() {
         htmlRekap += `<div class="box-total-rekap"><div class="label-total-rekap">Total Bulan Ini</div><div class="angka-total-rekap">${formatRupiah(totalRekapBulan)}</div></div>`;
     }
     el.kontenBulanan.innerHTML = htmlRekap;
-    gambarGrafik(dataDikelompokkan); 
+    gambarGrafik(dataDikelompokkan, dataBulanIni);
 }
 
 // 3. Fungsi Menggambar Grafik Chart.js
-function gambarGrafik(dataDikelompokkan) {
+function gambarGrafik(dataDikelompokkan, dataBulanIni) {
     if (state.modeAktif !== 'pengeluaran') {
         el.wadahGrafik.style.display = 'none';
         return;
     }
-    
+
     el.wadahGrafik.style.display = 'block';
-    const ctx = el.grafikPengeluaran.getContext('2d'); // Perbaikan duplikat ctx
+
+    // --- 1. LOGIKA BAR CHART (Tren Harian) ---
+    const ctxBar = el.grafikPengeluaran.getContext('2d');
     const labelTanggal = Object.keys(dataDikelompokkan).sort();
     const dataTotalHarian = labelTanggal.map(tgl => dataDikelompokkan[tgl].reduce((total, item) => total + item.harga, 0));
     const labelTanggalPendek = labelTanggal.map(tgl => tgl.substring(8));
-    
+
     if (chartPengeluaran) chartPengeluaran.destroy(); 
-    
-    chartPengeluaran = new window.Chart(ctx, {
+
+    chartPengeluaran = new window.Chart(ctxBar, {
         type: 'bar', 
         data: {
             labels: labelTanggalPendek,
-            datasets: [{ label: 'Total Pengeluaran Harian (Rp)', data: dataTotalHarian, backgroundColor: 'rgba(77, 171, 247, 0.5)', borderColor: '#1864ab', borderWidth: 1, borderRadius: 4 }]
+            datasets: [{ label: 'Total (Rp)', data: dataTotalHarian, backgroundColor: 'rgba(77, 171, 247, 0.5)', borderColor: '#1864ab', borderWidth: 1, borderRadius: 4 }]
         },
         options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    // --- 2. LOGIKA PIE CHART (Alokasi Kategori) ---
+    const ctxPie = el.grafikKategori.getContext('2d');
+
+    // Menghitung total uang per kategori
+    const rekapKategori = {};
+    dataBulanIni.forEach(item => {
+        const kat = item.kategori || "Lainnya";
+        if (!rekapKategori[kat]) rekapKategori[kat] = 0;
+        rekapKategori[kat] += item.harga;
+    });
+
+    const labelKategori = Object.keys(rekapKategori);
+    const dataKategori = Object.values(rekapKategori);
+
+    // Warna-warni cantik untuk tiap potongan kue
+    const warnaPie = ['#ff8787', '#4dabf7', '#51cf66', '#fcc419', '#cc5de8', '#ff922b'];
+
+    if (chartKategori) chartKategori.destroy();
+
+    chartKategori = new window.Chart(ctxPie, {
+        type: 'pie',
+        data: {
+            labels: labelKategori,
+            datasets: [{
+                data: dataKategori,
+                backgroundColor: warnaPie,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
     });
 }
 

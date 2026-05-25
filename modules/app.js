@@ -109,16 +109,18 @@ el.btnSimpanCatatan.addEventListener('click', async () => {
 el.btnSimpanPengeluaran.addEventListener('click', async () => {
     const nama = el.inputNamaPengeluaran.value.trim();
     const nominal = el.inputNominalPengeluaran.value;
-    const kategori = el.inputKategoriPengeluaran.value; // <--- Ambil nilai Kategori
+    
+    // Pastikan baris ini ADA untuk menangkap nilai dari kotak pilihan HTML
+    const kategori = el.inputKategoriPengeluaran.value; 
+    
     const tgl = el.inputTanggal.value;
     
-    // Lempar variabel kategori ke fungsi simpan
+    // Pastikan variabel 'kategori' ikut dikirim ke dalam fungsi
     const sukses = await simpanPengeluaran(nama, nominal, kategori, tgl);
+    
     if (sukses) {
-        // Kosongkan form setelah berhasil
         el.inputNamaPengeluaran.value = ""; 
         el.inputNominalPengeluaran.value = "";
-        el.inputKategoriPengeluaran.value = "Makanan"; // Reset ke default
         renderLayarUtama();
     }
 });

@@ -56,6 +56,7 @@ export const el = {
     inputUsername: document.getElementById('inputUsername'),
     inputPasswordAkun: document.getElementById('inputPasswordAkun'),
     btnBatalAkun: document.getElementById('btnBatalAkun'),
+    grafikKategori: document.getElementById('grafikKategori'),
     btnSimpanAkun: document.getElementById('btnSimpanAkun'),
     
     // 8. Daftar & Modal Edit

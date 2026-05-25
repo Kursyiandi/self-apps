@@ -167,7 +167,7 @@
             <ul id="daftarItem" class="daftar-kartu"></ul>
         </div>
 
-        <div id="areaBulanan" class="kotak-utama">
+        <div id="areaBulanan" class="kotak-utama" style="display: none;">
             <div class="header-bulanan">
                 <button id="btnKembali" class="btn-kembali" title="Kembali">⬅</button>
                 <h3 id="judulBulanan" class="judul-bulanan" style="flex: 1;">Rekap</h3>
@@ -176,9 +176,16 @@
             </div>
             
             <div id="wadahGrafik" style="display: none; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 12px; border: 1px solid #dee2e6;">
+                <h4 style="text-align: center; margin-top: 0; color: #495057;">Tren Harian</h4>
                 <canvas id="grafikPengeluaran"></canvas>
+                
+                <hr style="border-top: 1px dashed #dee2e6; margin: 20px 0;">
+                <h4 style="text-align: center; margin-top: 0; color: #495057;">Alokasi Kategori</h4>
+                <div style="max-width: 300px; margin: 0 auto;">
+                    <canvas id="grafikKategori"></canvas>
+                </div>
             </div>
-
+            
             <div id="kontenBulanan"></div>
         </div>
     </div>
