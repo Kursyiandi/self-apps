@@ -1,61 +1,44 @@
 import { state } from './store.js';
 import { formatRupiah, bersihkanTeks } from './helper.js';
+import { el } from './dom.js'; // Import DOM
 
-// Tangkap Elemen DOM
-const inputTanggal = document.getElementById('inputTanggalPilih');
-const inputCari = document.getElementById('inputCariItem');
-const wadahCari = document.getElementById('wadahCari');
-const wadahNavTanggal = document.getElementById('wadahNavTanggal');
-const btnBukaSebulan = document.getElementById('btnBukaSebulan');
-const daftarItem = document.getElementById('daftarItem');
-const teksTanggalHeader = document.getElementById('teksTanggalHeader');
-
-// 1. Fungsi Update Teks Tanggal di Header
 export function updateTanggalHeader() {
-    const tgl = inputTanggal.value;
+    const tgl = el.inputTanggal.value;
     if(!tgl) return;
     const dateObj = new Date(tgl);
-    teksTanggalHeader.innerText = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    el.teksTanggalHeader.innerText = dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-// 2. Fungsi Mengganti Tab Aktif
 export function gantiTab(tab) {
     state.modeAktif = tab;
+    el.btnMenuCatatan.classList.toggle('aktif', tab === 'catatan');
+    el.btnMenuPengeluaran.classList.toggle('aktif', tab === 'pengeluaran');
+    el.btnMenuAkun.classList.toggle('aktif', tab === 'akun');
     
-    // Ubah warna tombol tab
-    document.getElementById('btnMenuCatatan').classList.toggle('aktif', tab === 'catatan');
-    document.getElementById('btnMenuPengeluaran').classList.toggle('aktif', tab === 'pengeluaran');
-    document.getElementById('btnMenuAkun').classList.toggle('aktif', tab === 'akun');
+    el.halamanCatatan.classList.toggle('aktif', tab === 'catatan');
+    el.halamanPengeluaran.classList.toggle('aktif', tab === 'pengeluaran');
+    el.halamanAkun.classList.toggle('aktif', tab === 'akun');
     
-    // Tampilkan/sembunyikan area input
-    document.getElementById('halamanCatatan').classList.toggle('aktif', tab === 'catatan');
-    document.getElementById('halamanPengeluaran').classList.toggle('aktif', tab === 'pengeluaran');
-    document.getElementById('halamanAkun').classList.toggle('aktif', tab === 'akun');
+    if (el.inputCari) el.inputCari.value = ""; 
     
-    if (inputCari) inputCari.value = ""; 
-    
-    // Logika Search Bar vs Tanggal
     if (tab === 'akun') {
-        wadahNavTanggal.style.display = 'none';
-        btnBukaSebulan.style.display = 'none';
-        wadahCari.style.display = 'flex';
+        el.wadahNavTanggal.style.display = 'none';
+        el.btnBukaSebulan.style.display = 'none';
+        el.wadahCari.style.display = 'flex';
     } else {
-        wadahNavTanggal.style.display = 'flex';
-        btnBukaSebulan.style.display = 'flex';
-        wadahCari.style.display = tab === 'catatan' ? 'flex' : 'none';
-        btnBukaSebulan.innerText = tab === 'catatan' ? 'Catatan Bulan Ini' : 'Pengeluaran Bulan Ini';
+        el.wadahNavTanggal.style.display = 'flex';
+        el.btnBukaSebulan.style.display = 'flex';
+        el.wadahCari.style.display = tab === 'catatan' ? 'flex' : 'none';
+        el.btnBukaSebulan.innerText = tab === 'catatan' ? 'Catatan Bulan Ini' : 'Pengeluaran Bulan Ini';
     }
-    
-    // Gambar ulang layar sesuai tab
     renderLayarUtama();
 }
 
-// 3. Fungsi Inti: Menggambar Daftar Kartu (Catatan/Pengeluaran/Akun)
 export function renderLayarUtama() {
-    daftarItem.innerHTML = "";
-    const tglPilih = inputTanggal.value; 
+    el.daftarItem.innerHTML = "";
+    const tglPilih = el.inputTanggal.value; 
     const blnPilih = tglPilih.substring(0, 7); 
-    const kataKunci = inputCari && wadahCari.style.display !== 'none' ? inputCari.value.toLowerCase() : "";
+    const kataKunci = el.inputCari && el.wadahCari.style.display !== 'none' ? el.inputCari.value.toLowerCase() : "";
     
     // --- RENDER CATATAN ---
     if (state.modeAktif === "catatan") {
@@ -91,10 +74,17 @@ export function renderLayarUtama() {
             if (data.tanggal_db && data.tanggal_db.startsWith(blnPilih)) totalBulan += data.harga;
             if (data.tanggal_db === tglPilih) {
                 totalHari += data.harga; jumlahTampil++;
+                
+                // Jika data lama tidak punya kategori, tampilkan "Lainnya"
+                const teksKategori = data.kategori ? data.kategori : "Lainnya"; 
+
                 htmlHariIni += `
                     <li class="item-pengeluaran">
                         <div class="header-kartu">
-                            <div class="waktu-teks">🕒 Jam: ${data.jam_input || '-'}</div>
+                            <div class="waktu-teks">
+                                🕒 Jam: ${data.jam_input || '-'} • 
+                                <span style="color:#e03131; font-weight:bold;">🏷️ ${teksKategori}</span>
+                            </div>
                             <div class="grup-tombol-kecil">
                                 <button class="btn-aksi btn-hapus" data-id="${data.id}" data-jenis="pengeluaran" title="Hapus">🗑️</button>
                             </div>

@@ -113,11 +113,24 @@
                     <button id="btnTambahPengeluaran" class="btn-tambah-mobile" style="color: #e03131; background: #fff5f5; border-color: #ff8787;">➕ Catat Pengeluaran Baru</button>
                     
                     <!-- 🔴 WADAH INPUT & TOMBOL (Bisa Sembunyi) -->
+                    <!-- WADAH INPUT PENGELUARAN (Tampilan Mobile) -->
                     <div id="wadahInputPengeluaran" class="wadah-input-pengeluaran">
                         <div class="input-group" style="margin-bottom: 10px;">
                             <input type="text" id="inputNamaPengeluaran" placeholder="Nama Barang (Misal: Kopi)">
                             <input type="number" id="inputNominalPengeluaran" placeholder="Harga (Misal: 15000)">
                         </div>
+                        
+                        <!-- 👇 TAMBAHKAN KOTAK PILIHAN KATEGORI DI SINI 👇 -->
+                        <select id="inputKategoriPengeluaran" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; margin-bottom: 15px; font-size: 15px; outline: none; background: white;">
+                            <option value="Makanan">🍔 Makanan & Minuman</option>
+                            <option value="Transportasi">🚗 Transportasi</option>
+                            <option value="Belanja">🛍️ Belanja</option>
+                            <option value="Tagihan">🧾 Tagihan & Utilitas</option>
+                            <option value="Hiburan">🎬 Hiburan</option>
+                            <option value="Lainnya">📦 Lainnya</option>
+                        </select>
+                        <!-- 👆 ---------------------------------------- 👆 -->
+
                         <div class="grup-tombol-simpan">
                             <button id="btnBatalPengeluaran">Batal</button>
                             <button id="btnSimpanPengeluaran" class="btn-simpan" style="background-color:#ff8787;">Catat Pengeluaran</button>

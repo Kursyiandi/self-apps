@@ -9,11 +9,11 @@ import { simpanPengeluaran, hapusPengeluaran } from './pengeluaran.js';
 import { simpanAkun, hapusAkun } from './akun.js';
 import { dekripsi, showToast } from './helper.js';
 import { updateDropdownBulan, renderLayarBulanan, downloadPDF } from './rekap.js';
+import { el } from './dom.js';
 
 // 1. Inisialisasi Tanggal Hari Ini
-const inputTanggal = document.getElementById('inputTanggalPilih');
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
-inputTanggal.value = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
+el.inputTanggal.value = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
 updateTanggalHeader(); 
 
 // 2. Fungsi Utama: Menarik semua data setelah Login
@@ -32,32 +32,31 @@ async function initData() {
 initAuth(
     // JIKA LOGIN SUKSES
     () => {
-        document.getElementById('areaLogin').style.display = 'none';
-        document.getElementById('areaApp').style.display = 'block';
-        document.getElementById('infoUser').innerText = `Halo, ${state.currentUser.user_metadata.full_name || 'Pengguna'}!`;
+        el.areaLogin.style.display = 'none';
+        el.areaApp.style.display = 'block';
+        el.infoUser.innerText = `Halo, ${state.currentUser.user_metadata.full_name || 'Pengguna'}!`;
         
-        // Mencegah tarik data berulang kali jika status berubah-ubah
         if (!state.dataSudahDitarikAwal) {
             state.dataSudahDitarikAwal = true; 
-            setTimeout(() => { initData(); }, 150); // Jeda kecil untuk keamanan Supabase
+            setTimeout(() => { initData(); }, 150); 
         }
     },
     // JIKA LOGOUT
     () => {
-        document.getElementById('areaLogin').style.display = 'block';
-        document.getElementById('areaApp').style.display = 'none';
-        document.getElementById('infoUser').innerText = "";
+        el.areaLogin.style.display = 'block';
+        el.areaApp.style.display = 'none';
+        el.infoUser.innerText = "";
     }
 );
 
 // 4. Pasang Event Listener Tombol Utama
-document.getElementById('btnLogin').addEventListener('click', login);
-document.getElementById('btnLogout').addEventListener('click', logout);
+el.btnLogin.addEventListener('click', login);
+el.btnLogout.addEventListener('click', logout);
 
 // Event Listener Tab Menu
-document.getElementById('btnMenuCatatan').addEventListener('click', () => gantiTab('catatan'));
-document.getElementById('btnMenuPengeluaran').addEventListener('click', () => gantiTab('pengeluaran'));
-document.getElementById('btnMenuAkun').addEventListener('click', () => gantiTab('akun'));
+el.btnMenuCatatan.addEventListener('click', () => gantiTab('catatan'));
+el.btnMenuPengeluaran.addEventListener('click', () => gantiTab('pengeluaran'));
+el.btnMenuAkun.addEventListener('click', () => gantiTab('akun'));
 
 // ==========================================
 // EVENT LISTENER TANGGAL & PENCARIAN
@@ -65,8 +64,7 @@ document.getElementById('btnMenuAkun').addEventListener('click', () => gantiTab(
 
 // Fungsi untuk maju/mundur hari
 function ubahTanggalHari(selisih) {
-    const inputTanggal = document.getElementById('inputTanggalPilih');
-    const tgl = inputTanggal.value;
+    const tgl = el.inputTanggal.value;
     if(!tgl) return;
     
     const dateObj = new Date(tgl);
@@ -76,69 +74,71 @@ function ubahTanggalHari(selisih) {
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
     
-    inputTanggal.value = `${year}-${month}-${day}`;
-    updateTanggalHeader(); // Update teks judul
-    renderLayarUtama();    // Gambar ulang layar
+    el.inputTanggal.value = `${year}-${month}-${day}`;
+    updateTanggalHeader(); 
+    renderLayarUtama();   
 }
 
-// Pasang ke tombol < dan >
-document.getElementById('btnPrevTanggal').addEventListener('click', () => ubahTanggalHari(-1));
-document.getElementById('btnNextTanggal').addEventListener('click', () => ubahTanggalHari(1));
+el.btnPrevTanggal.addEventListener('click', () => ubahTanggalHari(-1));
+el.btnNextTanggal.addEventListener('click', () => ubahTanggalHari(1));
 
-// (Ini kode yang sudah ada sebelumnya, biarkan saja)
-inputTanggal.addEventListener('change', () => { 
+el.inputTanggal.addEventListener('change', () => { 
     updateTanggalHeader(); 
     renderLayarUtama(); 
 });
-document.getElementById('inputCariItem').addEventListener('input', () => {
+el.inputCari.addEventListener('input', () => {
     renderLayarUtama();
 });
 
 // --- EVENT LISTENER SIMPAN DATA ---
 
 // 1. Simpan Catatan
-document.getElementById('btnSimpanCatatan').addEventListener('click', async () => {
-    const inputCatatan = document.getElementById('inputCatatan');
-    const teks = inputCatatan.value.trim();
-    const tgl = inputTanggal.value;
+el.btnSimpanCatatan.addEventListener('click', async () => {
+    const teks = el.inputCatatan.value.trim();
+    const tgl = el.inputTanggal.value;
     
     const sukses = await simpanCatatan(teks, tgl);
     if (sukses) {
-        inputCatatan.value = ""; 
-        inputCatatan.style.height = "44px";
+        el.inputCatatan.value = ""; 
+        el.inputCatatan.style.height = "44px";
         renderLayarUtama();
     }
 });
 
 // 2. Simpan Pengeluaran
-document.getElementById('btnSimpanPengeluaran').addEventListener('click', async () => {
-    const inputNama = document.getElementById('inputNamaPengeluaran');
-    const inputNominal = document.getElementById('inputNominalPengeluaran');
-    const tgl = inputTanggal.value;
+el.btnSimpanPengeluaran.addEventListener('click', async () => {
+    const nama = el.inputNamaPengeluaran.value.trim();
+    const nominal = el.inputNominalPengeluaran.value;
+    const kategori = el.inputKategoriPengeluaran.value; // <--- Ambil nilai Kategori
+    const tgl = el.inputTanggal.value;
     
-    const sukses = await simpanPengeluaran(inputNama.value.trim(), inputNominal.value, tgl);
+    // Lempar variabel kategori ke fungsi simpan
+    const sukses = await simpanPengeluaran(nama, nominal, kategori, tgl);
     if (sukses) {
-        inputNama.value = ""; inputNominal.value = "";
+        // Kosongkan form setelah berhasil
+        el.inputNamaPengeluaran.value = ""; 
+        el.inputNominalPengeluaran.value = "";
+        el.inputKategoriPengeluaran.value = "Makanan"; // Reset ke default
         renderLayarUtama();
     }
 });
 
 // 3. Simpan Akun
-document.getElementById('btnSimpanAkun').addEventListener('click', async () => {
-    const inputPlatform = document.getElementById('inputNamaPlatform');
-    const inputUsername = document.getElementById('inputUsername');
-    const inputPassword = document.getElementById('inputPasswordAkun');
-    const pinMaster = document.getElementById('inputPinMaster').value;
+el.btnSimpanAkun.addEventListener('click', async () => {
+    const platform = el.inputNamaPlatform.value.trim();
+    const username = el.inputUsername.value.trim();
+    const password = el.inputPasswordAkun.value;
+    const pinMaster = el.inputPinMaster.value;
     
-    const sukses = await simpanAkun(inputPlatform.value.trim(), inputUsername.value.trim(), inputPassword.value, pinMaster);
+    const sukses = await simpanAkun(platform, username, password, pinMaster);
     if (sukses) {
-        inputPlatform.value = ""; inputUsername.value = ""; inputPassword.value = "";
+        el.inputNamaPlatform.value = ""; el.inputUsername.value = ""; el.inputPasswordAkun.value = "";
         renderLayarUtama();
     }
 });
 
 // --- EVENT LISTENER DELEGATION (Klik Daftar Item: Hapus, Edit, Copy, Lihat) ---
-document.getElementById('daftarItem').addEventListener('click', async function(e) {
+el.daftarItem.addEventListener('click', async function(e) {
     // Fitur Copy Username
     const elUsername = e.target.closest('.teks-username-akun');
     if (elUsername) {
@@ -170,16 +170,16 @@ document.getElementById('daftarItem').addEventListener('click', async function(e
     // Fitur Buka Modal Edit Catatan
     if(btn.classList.contains('btn-edit') && jenis === 'catatan') {
         const isiLama = btn.closest('li').querySelector('.isi-teks').innerText;
-        document.getElementById('inputEditCatatan').value = isiLama;
-        document.getElementById('overlayModal').style.display = 'block';
-        document.getElementById('modalEdit').style.display = 'block';
+        el.inputEditCatatan.value = isiLama;
+        el.overlayModal.style.display = 'block';
+        el.modalEdit.style.display = 'block';
         state.idCatatanEditAktif = idItem; 
     }
     
     // Fitur Lihat/Copy Password
     if(btn.classList.contains('btn-lihat') || btn.classList.contains('btn-copy')) {
         const teksAcak = btn.getAttribute('data-pass');
-        const pinMaster = document.getElementById('inputPinMaster').value;
+        const pinMaster = el.inputPinMaster.value;
         if (!pinMaster) { showToast("Isi PIN Master di atas!", "error"); return; }
         
         const hasilDekripsi = dekripsi(teksAcak, pinMaster);
@@ -201,18 +201,18 @@ document.getElementById('daftarItem').addEventListener('click', async function(e
 });
 
 // Event Listener Modal Edit Catatan
-document.getElementById('btnBatalEdit').addEventListener('click', () => {
-    document.getElementById('overlayModal').style.display = 'none'; document.getElementById('modalEdit').style.display = 'none';
+el.btnBatalEdit.addEventListener('click', () => {
+    el.overlayModal.style.display = 'none'; el.modalEdit.style.display = 'none';
     state.idCatatanEditAktif = null;
 });
 
-document.getElementById('btnSimpanEdit').addEventListener('click', async () => {
-    const teksBaru = document.getElementById('inputEditCatatan').value.trim();
+el.btnSimpanEdit.addEventListener('click', async () => {
+    const teksBaru = el.inputEditCatatan.value.trim();
     if (teksBaru && state.idCatatanEditAktif) {
         const sukses = await updateCatatan(state.idCatatanEditAktif, teksBaru);
         if (sukses) {
-            document.getElementById('overlayModal').style.display = 'none'; 
-            document.getElementById('modalEdit').style.display = 'none';
+            el.overlayModal.style.display = 'none'; 
+            el.modalEdit.style.display = 'none';
             state.idCatatanEditAktif = null;
             renderLayarUtama();
         }
@@ -222,122 +222,110 @@ document.getElementById('btnSimpanEdit').addEventListener('click', async () => {
 // ==========================================
 // EVENT LISTENER: REKAP & GRAFIK (BULANAN)
 // ==========================================
-const areaUtama = document.getElementById('areaUtama');
-const areaBulanan = document.getElementById('areaBulanan');
-
-document.getElementById('btnBukaSebulan').addEventListener('click', () => {
-    areaUtama.style.display = 'none'; 
-    areaBulanan.style.display = 'block';
-    updateDropdownBulan(document.getElementById('inputTanggalPilih').value); 
-    document.getElementById('inputBulanRekap').value = document.getElementById('inputTanggalPilih').value.substring(0, 7); 
+el.btnBukaSebulan.addEventListener('click', () => {
+    el.areaUtama.style.display = 'none'; 
+    el.areaBulanan.style.display = 'block';
+    updateDropdownBulan(el.inputTanggal.value); 
+    el.inputBulanRekap.value = el.inputTanggal.value.substring(0, 7); 
     renderLayarBulanan();
 });
 
-document.getElementById('inputBulanRekap').addEventListener('change', renderLayarBulanan);
-document.getElementById('btnKembali').addEventListener('click', () => { areaBulanan.style.display = 'none'; areaUtama.style.display = 'block'; });
-document.getElementById('btnDownloadPDF').addEventListener('click', downloadPDF);
+el.inputBulanRekap.addEventListener('change', renderLayarBulanan);
+el.btnKembali.addEventListener('click', () => { el.areaBulanan.style.display = 'none'; el.areaUtama.style.display = 'block'; });
+el.btnDownloadPDF.addEventListener('click', downloadPDF);
 
 // ==========================================
 // EVENT LISTENER: UX MOBILE & ANIMASI UI
 // ==========================================
-// 1. Auto Resize Textarea
 function autoResize() {
     if (this.value === "") { this.style.height = '44px'; return; }
     this.style.height = '44px'; 
     this.style.height = (this.scrollHeight + 2) + 'px'; 
 }
-document.getElementById('inputCatatan').addEventListener('input', autoResize);
-document.getElementById('inputEditCatatan').addEventListener('input', autoResize);
+el.inputCatatan.addEventListener('input', autoResize);
+el.inputEditCatatan.addEventListener('input', autoResize);
 
-// 2. Mobile Toggles (Tombol +)
-const btnTambahCatatan = document.getElementById('btnTambahCatatan');
-const wadahInputCatatan = document.getElementById('wadahInputCatatan');
-btnTambahCatatan.addEventListener('click', () => {
-    wadahInputCatatan.classList.add('tampil');
-    btnTambahCatatan.style.display = 'none';
-    document.getElementById('inputCatatan').focus();
+// Mobile Toggles
+el.btnTambahCatatan.addEventListener('click', () => {
+    el.wadahInputCatatan.classList.add('tampil');
+    el.btnTambahCatatan.style.display = 'none';
+    el.inputCatatan.focus();
 });
-document.getElementById('btnBatalCatatan').addEventListener('click', () => {
-    wadahInputCatatan.classList.remove('tampil');
-    btnTambahCatatan.style.display = 'block';
-    document.getElementById('inputCatatan').value = ""; 
-    document.getElementById('inputCatatan').style.height = "44px"; 
+el.btnBatalCatatan.addEventListener('click', () => {
+    el.wadahInputCatatan.classList.remove('tampil');
+    el.btnTambahCatatan.style.display = 'block';
+    el.inputCatatan.value = ""; 
+    el.inputCatatan.style.height = "44px"; 
 });
 
-const btnTambahPengeluaran = document.getElementById('btnTambahPengeluaran');
-const wadahInputPengeluaran = document.getElementById('wadahInputPengeluaran');
-btnTambahPengeluaran.addEventListener('click', () => {
-    wadahInputPengeluaran.classList.add('tampil');
-    btnTambahPengeluaran.style.display = 'none';
-    document.getElementById('inputNamaPengeluaran').focus();
+el.btnTambahPengeluaran.addEventListener('click', () => {
+    el.wadahInputPengeluaran.classList.add('tampil');
+    el.btnTambahPengeluaran.style.display = 'none';
+    el.inputNamaPengeluaran.focus();
 });
-document.getElementById('btnBatalPengeluaran').addEventListener('click', () => {
-    wadahInputPengeluaran.classList.remove('tampil');
-    btnTambahPengeluaran.style.display = 'block';
-    document.getElementById('inputNamaPengeluaran').value = ""; 
-    document.getElementById('inputNominalPengeluaran').value = ""; 
+el.btnBatalPengeluaran.addEventListener('click', () => {
+    el.wadahInputPengeluaran.classList.remove('tampil');
+    el.btnTambahPengeluaran.style.display = 'block';
+    el.inputNamaPengeluaran.value = ""; 
+    el.inputNominalPengeluaran.value = ""; 
 });
 
-const btnTambahAkun = document.getElementById('btnTambahAkun');
-const wadahInputAkun = document.getElementById('wadahInputAkun');
-btnTambahAkun.addEventListener('click', () => {
-    wadahInputAkun.classList.add('tampil');
-    btnTambahAkun.style.display = 'none';
-    document.getElementById('inputNamaPlatform').focus();
+el.btnTambahAkun.addEventListener('click', () => {
+    el.wadahInputAkun.classList.add('tampil');
+    el.btnTambahAkun.style.display = 'none';
+    el.inputNamaPlatform.focus();
 });
-document.getElementById('btnBatalAkun').addEventListener('click', () => {
-    wadahInputAkun.classList.remove('tampil');
-    btnTambahAkun.style.display = 'flex'; 
-    document.getElementById('inputNamaPlatform').value = ""; 
-    document.getElementById('inputUsername').value = ""; 
-    document.getElementById('inputPasswordAkun').value = ""; 
+el.btnBatalAkun.addEventListener('click', () => {
+    el.wadahInputAkun.classList.remove('tampil');
+    el.btnTambahAkun.style.display = 'flex'; 
+    el.inputNamaPlatform.value = ""; 
+    el.inputUsername.value = ""; 
+    el.inputPasswordAkun.value = ""; 
 });
 
 // ==========================================
 // EVENT LISTENER: WEB SPEECH API (VOICE NOTE)
 // ==========================================
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const btnSuara = document.getElementById('btnSuaraCatatan');
-const inputCatatan = document.getElementById('inputCatatan');
 
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'id-ID'; recognition.interimResults = false;
     
-    btnSuara.addEventListener('click', () => {
-        if (btnSuara.classList.contains('merekam')) {
+    el.btnSuaraCatatan.addEventListener('click', () => {
+        if (el.btnSuaraCatatan.classList.contains('merekam')) {
             recognition.stop();
-            btnSuara.classList.remove('merekam'); 
-            btnSuara.innerText = "🎤";
+            el.btnSuaraCatatan.classList.remove('merekam'); 
+            el.btnSuaraCatatan.innerText = "🎤";
             showToast("Batal merekam", "normal");
             
-            if (window.innerWidth <= 500 && wadahInputCatatan.classList.contains('tampil') && inputCatatan.value.trim() === '') {
-                wadahInputCatatan.classList.remove('tampil');
-                btnTambahCatatan.style.display = 'block';
+            if (window.innerWidth <= 500 && el.wadahInputCatatan.classList.contains('tampil') && el.inputCatatan.value.trim() === '') {
+                el.wadahInputCatatan.classList.remove('tampil');
+                el.btnTambahCatatan.style.display = 'block';
             }
         } else { 
             recognition.start(); 
-            btnSuara.classList.add('merekam'); 
-            btnSuara.innerText = "🔴"; 
+            el.btnSuaraCatatan.classList.add('merekam'); 
+            el.btnSuaraCatatan.innerText = "🔴"; 
             showToast("Silakan bicara...", "normal"); 
             
-            if (window.innerWidth <= 500 && !wadahInputCatatan.classList.contains('tampil')) {
-                wadahInputCatatan.classList.add('tampil');
-                btnTambahCatatan.style.display = 'none';
+            if (window.innerWidth <= 500 && !el.wadahInputCatatan.classList.contains('tampil')) {
+                el.wadahInputCatatan.classList.add('tampil');
+                el.btnTambahCatatan.style.display = 'none';
             }
         }
     });
     
     recognition.onresult = (event) => {
         const hasil = event.results[0][0].transcript;
-        inputCatatan.value = inputCatatan.value ? inputCatatan.value + " " + hasil : hasil;
-        inputCatatan.dispatchEvent(new Event('input')); // Memicu autoResize
-        btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤";
+        el.inputCatatan.value = el.inputCatatan.value ? el.inputCatatan.value + " " + hasil : hasil;
+        el.inputCatatan.dispatchEvent(new Event('input')); 
+        el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤";
         showToast("Suara ditangkap!", "success");
     };
     
-    recognition.onerror = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
-    recognition.onend = () => { btnSuara.classList.remove('merekam'); btnSuara.innerText = "🎤"; };
+    recognition.onerror = () => { el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤"; };
+    recognition.onend = () => { el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤"; };
 } else { 
-    btnSuara.style.display = 'none'; 
+    el.btnSuaraCatatan.style.display = 'none'; 
 }

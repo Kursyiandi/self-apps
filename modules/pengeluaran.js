@@ -13,7 +13,12 @@ export async function simpanPengeluaran(nama, nominal, tgl) {
     if (!navigator.onLine) { showToast("Tidak ada koneksi internet!", "error"); return false; }
 
     const { data, error } = await supabase.from('pengeluaran_pribadi').insert([{
-        user_id: state.currentUser.id, nama_item: nama, harga: Number(nominal), tanggal_db: tgl, jam_input: formatWaktuDetail()
+        user_id: state.currentUser.id, 
+        nama_item: nama, 
+        harga: Number(nominal),
+        kategori: kategori, 
+        tanggal_db: tgl, 
+        jam_input: formatWaktuDetail()
     }]).select();
 
     if (error) { 

@@ -1,11 +1,14 @@
+import { el } from './dom.js';
+
 export function showToast(pesan, tipe = "normal") {
-    const toast = document.getElementById("toastNotification");
-    toast.innerText = pesan;
-    toast.className = "toast show"; 
-    if (tipe === "error") toast.classList.add("error");
-    if (tipe === "success") toast.classList.add("success");
-    setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 1500);
+    // Tidak perlu lagi: const toast = document.getElementById("toastNotification");
+    el.toastNotification.innerText = pesan;
+    el.toastNotification.className = "toast show"; 
+    if (tipe === "error") el.toastNotification.classList.add("error");
+    if (tipe === "success") el.toastNotification.classList.add("success");
+    setTimeout(() => { el.toastNotification.className = el.toastNotification.className.replace("show", ""); }, 1500);
 }
+
 
 export function enkripsi(teks, pin) { return CryptoJS.AES.encrypt(teks, pin).toString(); }
 

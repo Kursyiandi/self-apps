@@ -1,11 +1,12 @@
 import { state } from './store.js';
 import { formatRupiah, bersihkanTeks, showToast } from './helper.js';
+import { el } from './dom.js'; // Gunakan DOM
 
 let chartPengeluaran = null;
 
-// 1. Fungsi Dropdown Pintar (Mendeteksi bulan apa saja yang ada datanya)
+// 1. Fungsi Dropdown Pintar
 export function updateDropdownBulan(tanggalPilih) {
-    const select = document.getElementById('inputBulanRekap');
+    const select = el.inputBulanRekap;
     const bulanUnik = new Set();
     
     const blnSekarang = (tanggalPilih || new Date().toISOString().slice(0, 10)).substring(0, 7);
@@ -30,17 +31,16 @@ export function updateDropdownBulan(tanggalPilih) {
 
 // 2. Fungsi Menggambar Layar Rekap
 export function renderLayarBulanan() {
-    const konten = document.getElementById('kontenBulanan');
-    const blnPilih = document.getElementById('inputBulanRekap').value; 
+    const blnPilih = el.inputBulanRekap.value; 
     
-    document.getElementById('judulBulanan').innerText = `Rekap ${state.modeAktif === 'catatan' ? 'Catatan' : 'Pengeluaran'}`;
+    el.judulBulanan.innerText = `Rekap ${state.modeAktif === 'catatan' ? 'Catatan' : 'Pengeluaran'}`;
     let dataSumber = state.modeAktif === 'catatan' ? state.dataCatatanPribadi : state.dataPengeluaranPribadi;
     let dataBulanIni = dataSumber.filter(d => d.tanggal_db && d.tanggal_db.startsWith(blnPilih));
     
     if (dataBulanIni.length === 0) {
         const namaBulan = new Date(blnPilih + "-01").toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-        konten.innerHTML = `<div class="pesan-kosong">Belum ada data di bulan ${namaBulan}.</div>`;
-        document.getElementById('wadahGrafik').style.display = 'none';
+        el.kontenBulanan.innerHTML = `<div class="pesan-kosong">Belum ada data di bulan ${namaBulan}.</div>`;
+        el.wadahGrafik.style.display = 'none';
         return;
     }
     
@@ -67,21 +67,19 @@ export function renderLayarBulanan() {
     if (state.modeAktif === 'pengeluaran') {
         htmlRekap += `<div class="box-total-rekap"><div class="label-total-rekap">Total Bulan Ini</div><div class="angka-total-rekap">${formatRupiah(totalRekapBulan)}</div></div>`;
     }
-    konten.innerHTML = htmlRekap;
+    el.kontenBulanan.innerHTML = htmlRekap;
     gambarGrafik(dataDikelompokkan); 
 }
 
 // 3. Fungsi Menggambar Grafik Chart.js
 function gambarGrafik(dataDikelompokkan) {
-    const wadahGrafik = document.getElementById('wadahGrafik');
-    const ctx = document.getElementById('grafikPengeluaran').getContext('2d');
-    
     if (state.modeAktif !== 'pengeluaran') {
-        wadahGrafik.style.display = 'none';
+        el.wadahGrafik.style.display = 'none';
         return;
     }
     
-    wadahGrafik.style.display = 'block';
+    el.wadahGrafik.style.display = 'block';
+    const ctx = el.grafikPengeluaran.getContext('2d'); // Perbaikan duplikat ctx
     const labelTanggal = Object.keys(dataDikelompokkan).sort();
     const dataTotalHarian = labelTanggal.map(tgl => dataDikelompokkan[tgl].reduce((total, item) => total + item.harga, 0));
     const labelTanggalPendek = labelTanggal.map(tgl => tgl.substring(8));
@@ -102,7 +100,7 @@ function gambarGrafik(dataDikelompokkan) {
 export function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const bulanAktif = document.getElementById('inputBulanRekap').value; 
+    const bulanAktif = el.inputBulanRekap.value; // Perbaikan DOM
     const namaBulan = new Date(bulanAktif + "-01").toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
     
     doc.setFontSize(18);
