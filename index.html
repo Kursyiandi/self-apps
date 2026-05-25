@@ -176,14 +176,23 @@
             </div>
             
             <div id="wadahGrafik" style="display: none; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 12px; border: 1px solid #dee2e6;">
-                <h4 style="text-align: center; margin-top: 0; color: #495057;">Tren Harian</h4>
-                <canvas id="grafikPengeluaran"></canvas>
-                
-                <hr style="border-top: 1px dashed #dee2e6; margin: 20px 0;">
-                <h4 style="text-align: center; margin-top: 0; color: #495057;">Alokasi Kategori</h4>
-                <div style="max-width: 300px; margin: 0 auto;">
-                    <canvas id="grafikKategori"></canvas>
+    
+                <div class="slider-grafik">
+                    <div class="item-grafik">
+                        <h4 style="text-align: center; margin-top: 0; color: #495057;">Alokasi Kategori</h4>
+                        <div style="max-width: 300px; margin: 0 auto;">
+                            <canvas id="grafikKategori"></canvas>
+                        </div>
+                        <div class="petunjuk-swipe">Geser kiri untuk Tren Harian 👉</div>
+                    </div>
+
+                    <div class="item-grafik">
+                        <h4 style="text-align: center; margin-top: 0; color: #495057;">Tren Harian</h4>
+                        <canvas id="grafikPengeluaran"></canvas>
+                        <div class="petunjuk-swipe">👈 Geser kanan untuk Kategori</div>
+                    </div>
                 </div>
+
             </div>
             
             <div id="kontenBulanan"></div>

@@ -362,3 +362,65 @@
                 width: 100%;
                 overflow: hidden; /* Mencegah grafik tumpah ke samping */
             }
+
+            /* =========================================
+            SLIDER GRAFIK (MODE MOBILE)
+            ========================================= */
+            .slider-grafik {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory; /* Mengunci posisi saat di-swipe */
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch; /* Agar swipe mulus di iPhone/iOS */
+                gap: 30px;
+                padding-bottom: 10px;
+            }
+
+            /* Mempercantik bentuk scrollbar di bawah grafik */
+            .slider-grafik::-webkit-scrollbar {
+                height: 6px;
+            }
+            .slider-grafik::-webkit-scrollbar-thumb {
+                background-color: #ced4da;
+                border-radius: 4px;
+            }
+
+            .item-grafik {
+                min-width: 100%; /* Memaksa setiap grafik mengambil layar penuh di HP */
+                scroll-snap-align: center; /* Titik berhenti slider */
+                flex-shrink: 0;
+                box-sizing: border-box;
+            }
+
+            .petunjuk-swipe {
+                text-align: center;
+                font-size: 12px;
+                color: #adb5bd;
+                margin-top: 15px;
+                font-style: italic;
+                animation: kedip 2s infinite; /* Animasi agar teks menarik perhatian */
+            }
+
+            @keyframes kedip {
+                0%, 100% { opacity: 0.5; }
+                50% { opacity: 1; }
+            }
+
+            /* =========================================
+            MODE DESKTOP (BERSEBELAHAN KIRI-KANAN)
+            ========================================= */
+            @media (min-width: 501px) {
+                .slider-grafik {
+                    overflow-x: visible; /* Matikan fitur scroll/swipe di laptop */
+                    gap: 20px;
+                }
+                
+                .item-grafik {
+                    min-width: 0; 
+                    flex: 1; /* Membagi layar menjadi 50% - 50% */
+                }
+                
+                .petunjuk-swipe {
+                    display: none; /* Sembunyikan tulisan petunjuk swipe di laptop */
+                }
+            }
