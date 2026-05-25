@@ -86,6 +86,8 @@ export function renderLayarUtama() {
                                 <span style="color:#e03131; font-weight:bold;">🏷️ ${teksKategori}</span>
                             </div>
                             <div class="grup-tombol-kecil">
+                                <button class="btn-aksi btn-edit" data-id="${data.id}" data-jenis="pengeluaran" data-nama="${bersihkanTeks(data.nama_item || "")}" data-harga="${data.harga}" data-kategori="${teksKategori}" title="Edit">✏️</button>
+                                
                                 <button class="btn-aksi btn-hapus" data-id="${data.id}" data-jenis="pengeluaran" title="Hapus">🗑️</button>
                             </div>
                         </div>

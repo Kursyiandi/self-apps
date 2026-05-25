@@ -191,13 +191,36 @@
     </div>
 </div>
 
-<div id="overlayModal"></div>
-<div id="modalEdit">
-    <h3 style="margin-top:0; color:#333; margin-bottom:15px; font-size: 18px;">✏️ Edit Catatan</h3>
-    <textarea id="inputEditCatatan"></textarea>
-    <div class="grup-tombol-modal">
-        <button id="btnBatalEdit" class="btn-batal-modal">Batal</button>
-        <button id="btnSimpanEdit" class="btn-simpan">Simpan Perubahan</button>
+<div id="overlayModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+<div id="modalEdit" class="modal-kartu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+    <h3 style="margin-top: 0; color: #495057;">Edit Catatan</h3>
+    <textarea id="inputEditCatatan" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; resize: vertical; min-height: 80px;" placeholder="Isi catatan..."></textarea>
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button id="btnBatalEdit" style="padding: 8px 15px; border: none; border-radius: 6px; background: #e9ecef; cursor: pointer; color: #495057; font-weight:bold;">Batal</button>
+        <button id="btnSimpanEdit" style="padding: 8px 15px; border: none; border-radius: 6px; background: #20c997; cursor: pointer; color: white; font-weight:bold;">Simpan</button>
+    </div>
+</div>
+
+<div id="modalEditPengeluaran" class="modal-kartu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+    <h3 style="margin-top: 0; color: #495057;">Edit Pengeluaran</h3>
+    
+    <input type="text" id="inputEditNamaPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;" placeholder="Nama Barang">
+    
+    <input type="number" id="inputEditNominalPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;" placeholder="Harga">
+    
+    <select id="inputEditKategoriPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;">
+        <option value="Makanan">🍔 Makanan & Minuman</option>
+        <option value="Transportasi">🚗 Transportasi</option>
+        <option value="Belanja">🛍️ Belanja</option>
+        <option value="Tagihan">🧾 Tagihan & Utilitas</option>
+        <option value="Hiburan">🎬 Hiburan</option>
+        <option value="Lainnya">📦 Lainnya</option>
+    </select>
+    
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button id="btnBatalEditPengeluaran" style="padding: 8px 15px; border: none; border-radius: 6px; background: #e9ecef; cursor: pointer; color: #495057; font-weight:bold;">Batal</button>
+        <button id="btnSimpanEditPengeluaran" style="padding: 8px 15px; border: none; border-radius: 6px; background: #ff8787; cursor: pointer; color: white; font-weight:bold;">Simpan</button>
     </div>
 </div>
 

@@ -41,3 +41,27 @@ export async function hapusPengeluaran(idItem) {
     }
     showToast("Gagal menghapus!", "error"); return false;
 }
+
+export async function updatePengeluaran(id, nama, nominal, kategori) {
+    if (!nama || !nominal) { showToast("Isi Nama & Harga dengan benar!", "error"); return false; }
+    if (!navigator.onLine) { showToast("Tidak ada koneksi internet!", "error"); return false; }
+
+    const { data, error } = await supabase
+        .from('pengeluaran_pribadi')
+        .update({ nama_item: nama, harga: Number(nominal), kategori: kategori })
+        .eq('id', id)
+        .select();
+
+    if (error) { showToast("Gagal mengupdate data!", "error"); return false; }
+    
+    // Update data di memori aplikasi (Store) agar UI langsung berubah
+    const index = state.dataPengeluaranPribadi.findIndex(item => item.id === id);
+    if (index !== -1) {
+        state.dataPengeluaranPribadi[index].nama_item = nama;
+        state.dataPengeluaranPribadi[index].harga = Number(nominal);
+        state.dataPengeluaranPribadi[index].kategori = kategori;
+    }
+    
+    showToast("Berhasil diperbarui!", "success");
+    return true;
+}

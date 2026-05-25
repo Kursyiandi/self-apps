@@ -3,6 +3,7 @@ export const state = {
     dataSudahDitarikAwal: false,
     modeAktif: "catatan",
     idCatatanEditAktif: null,
+    idPengeluaranEditAktif: null,
     
     dataCatatanPribadi: [],
     dataPengeluaranPribadi: [],

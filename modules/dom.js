@@ -59,13 +59,19 @@ export const el = {
     grafikKategori: document.getElementById('grafikKategori'),
     btnSimpanAkun: document.getElementById('btnSimpanAkun'),
     
-    // 8. Daftar & Modal Edit
+// 8. Daftar & Modal Edit
     daftarItem: document.getElementById('daftarItem'),
     overlayModal: document.getElementById('overlayModal'),
     modalEdit: document.getElementById('modalEdit'),
     inputEditCatatan: document.getElementById('inputEditCatatan'),
     btnBatalEdit: document.getElementById('btnBatalEdit'),
     btnSimpanEdit: document.getElementById('btnSimpanEdit'),
+    modalEditPengeluaran: document.getElementById('modalEditPengeluaran'),
+    inputEditNamaPengeluaran: document.getElementById('inputEditNamaPengeluaran'),
+    inputEditNominalPengeluaran: document.getElementById('inputEditNominalPengeluaran'),
+    inputEditKategoriPengeluaran: document.getElementById('inputEditKategoriPengeluaran'),
+    btnBatalEditPengeluaran: document.getElementById('btnBatalEditPengeluaran'),
+    btnSimpanEditPengeluaran: document.getElementById('btnSimpanEditPengeluaran'),
     
     // 9. Komponen Lainnya
     toastNotification: document.getElementById('toastNotification'),

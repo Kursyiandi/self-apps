@@ -5,11 +5,12 @@ import { fetchPengeluaran } from './pengeluaran.js';
 import { fetchAkun } from './akun.js';
 import { updateTanggalHeader, gantiTab, renderLayarUtama } from './ui.js';
 import { simpanCatatan, hapusCatatan, updateCatatan } from './catatan.js';
-import { simpanPengeluaran, hapusPengeluaran } from './pengeluaran.js';
+import { simpanPengeluaran, hapusPengeluaran, updatePengeluaran } from './pengeluaran.js';
 import { simpanAkun, hapusAkun } from './akun.js';
 import { dekripsi, showToast } from './helper.js';
 import { updateDropdownBulan, renderLayarBulanan, downloadPDF } from './rekap.js';
 import { el } from './dom.js';
+
 
 // 1. Inisialisasi Tanggal Hari Ini
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
@@ -170,12 +171,21 @@ el.daftarItem.addEventListener('click', async function(e) {
     }
     
     // Fitur Buka Modal Edit Catatan
-    if(btn.classList.contains('btn-edit') && jenis === 'catatan') {
-        const isiLama = btn.closest('li').querySelector('.isi-teks').innerText;
-        el.inputEditCatatan.value = isiLama;
+    if(btn.classList.contains('btn-edit') && jenis === 'pengeluaran') {
+        // Ambil data lama dari atribut HTML yang kita pasang di ui.js
+        const namaLama = btn.getAttribute('data-nama');
+        const hargaLama = btn.getAttribute('data-harga');
+        const kategoriLama = btn.getAttribute('data-kategori');
+        
+        // Isi form modal dengan data lama
+        el.inputEditNamaPengeluaran.value = namaLama;
+        el.inputEditNominalPengeluaran.value = hargaLama;
+        el.inputEditKategoriPengeluaran.value = kategoriLama;
+        
+        // Tampilkan modal
         el.overlayModal.style.display = 'block';
-        el.modalEdit.style.display = 'block';
-        state.idCatatanEditAktif = idItem; 
+        el.modalEditPengeluaran.style.display = 'block';
+        state.idPengeluaranEditAktif = idItem; 
     }
     
     // Fitur Lihat/Copy Password
@@ -204,7 +214,8 @@ el.daftarItem.addEventListener('click', async function(e) {
 
 // Event Listener Modal Edit Catatan
 el.btnBatalEdit.addEventListener('click', () => {
-    el.overlayModal.style.display = 'none'; el.modalEdit.style.display = 'none';
+    el.overlayModal.style.display = 'none'; 
+    el.modalEdit.style.display = 'none';
     state.idCatatanEditAktif = null;
 });
 
@@ -220,6 +231,44 @@ el.btnSimpanEdit.addEventListener('click', async () => {
         }
     }
 });
+
+// Event Listener Modal Edit Pengeluaran
+el.btnBatalEditPengeluaran.addEventListener('click', () => {
+    el.overlayModal.style.display = 'none'; 
+    el.modalEditPengeluaran.style.display = 'none';
+    state.idPengeluaranEditAktif = null;
+});
+
+el.btnSimpanEditPengeluaran.addEventListener('click', async () => {
+    const namaBaru = el.inputEditNamaPengeluaran.value.trim();
+    const hargaBaru = el.inputEditNominalPengeluaran.value;
+    const kategoriBaru = el.inputEditKategoriPengeluaran.value;
+
+    if (state.idPengeluaranEditAktif) {
+        const sukses = await updatePengeluaran(state.idPengeluaranEditAktif, namaBaru, hargaBaru, kategoriBaru);
+        if (sukses) {
+            el.overlayModal.style.display = 'none'; 
+            el.modalEditPengeluaran.style.display = 'none';
+            state.idPengeluaranEditAktif = null;
+            renderLayarUtama();
+        }
+    }
+});
+
+// Event Listener Modal Edit Pengeluaran
+el.btnBatalEditPengeluaran.addEventListener('click', () => {
+    el.overlayModal.style.display = 'none'; 
+    el.modalEditPengeluaran.style.display = 'none';
+    state.idPengeluaranEditAktif = null;
+});
+
+// Event Listener Modal Edit Pengeluaran
+el.btnBatalEditPengeluaran.addEventListener('click', () => {
+    el.overlayModal.style.display = 'none'; 
+    el.modalEditPengeluaran.style.display = 'none';
+    state.idPengeluaranEditAktif = null;
+});
+
 
 // ==========================================
 // EVENT LISTENER: REKAP & GRAFIK (BULANAN)
@@ -331,3 +380,32 @@ if (SpeechRecognition) {
 } else { 
     el.btnSuaraCatatan.style.display = 'none'; 
 }
+
+el.btnSimpanEditPengeluaran.addEventListener('click', async () => {
+    // 1. Cek apakah tombol merespon klik
+    console.log("Tombol simpan edit diklik!"); 
+
+    const namaBaru = el.inputEditNamaPengeluaran.value.trim();
+    const hargaBaru = el.inputEditNominalPengeluaran.value;
+    const kategoriBaru = el.inputEditKategoriPengeluaran.value;
+
+    // 2. Cek apakah ID pengeluaran berhasil ditangkap
+    console.log("ID yang mau diedit:", state.idPengeluaranEditAktif);
+
+    if (state.idPengeluaranEditAktif) {
+        console.log("Mulai proses update ke Supabase..."); // 3. Cek proses
+        const sukses = await updatePengeluaran(state.idPengeluaranEditAktif, namaBaru, hargaBaru, kategoriBaru);
+        
+        if (sukses) {
+            console.log("Update berhasil, menutup modal!");
+            el.overlayModal.style.display = 'none'; 
+            el.modalEditPengeluaran.style.display = 'none';
+            state.idPengeluaranEditAktif = null;
+            renderLayarUtama();
+        } else {
+            console.log("Fungsi updatePengeluaran mengembalikan false.");
+        }
+    } else {
+        console.log("ERROR: state.idPengeluaranEditAktif kosong/null!");
+    }
+});
