@@ -146,6 +146,31 @@
         #btnBatalPengeluaran { display: none; } /* Sembunyikan Batal di PC */
         .wadah-input-akun { display: flex; flex-direction: column; width: 100%; margin-bottom: 15px; }
         #btnBatalAkun { display: none; } /* Sembunyikan Batal di PC */
+        
+        /* Aturan khusus untuk layar desktop */
+        @media (min-width: 501px) {
+            /* Memosisikan Tombol Catat Pengeluaran ke tengah */
+            #wadahInputPengeluaran .grup-tombol-simpan {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+            #wadahInputPengeluaran .btn-simpan {
+                margin: 0 auto;
+                min-width: 200px; /* Memberi ukuran minimal agar proporsional */
+            }
+
+            /* Memosisikan Tombol Simpan Terenkripsi ke tengah */
+            #wadahInputAkun .grup-tombol-simpan {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+            }
+            #wadahInputAkun .btn-simpan {
+                margin: 0 auto;
+                min-width: 200px;
+            }
+        }
 
         @media (max-width: 500px) {
             body { padding: 10px; padding-bottom: 90px; } 
@@ -313,6 +338,12 @@
             }
             .toast.show {
                 bottom: 80px !important; /* Saat muncul, melayang tepat di atas menu bawah */
+            }
+
+            #btnTambahAkun.btn-tambah-mobile {
+                display: flex !important;
+                align-items: center;
+                justify-content: center;
             }
             
             }
