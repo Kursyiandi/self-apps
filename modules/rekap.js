@@ -99,39 +99,50 @@ function gambarGrafik(dataDikelompokkan, dataBulanIni) {
     });
 
     // --- 2. LOGIKA PIE CHART (Alokasi Kategori) ---
-    const ctxPie = el.grafikKategori.getContext('2d');
+       const ctxPie = el.grafikKategori.getContext('2d');
+       
+       // Menghitung total uang per kategori
+       const rekapKategori = {};
+       let totalSeluruhPengeluaran = 0; // <--- Variabel baru penampung total uang
 
-    // Menghitung total uang per kategori
-    const rekapKategori = {};
-    dataBulanIni.forEach(item => {
-        const kat = item.kategori || "Lainnya";
-        if (!rekapKategori[kat]) rekapKategori[kat] = 0;
-        rekapKategori[kat] += item.harga;
-    });
+       dataBulanIni.forEach(item => {
+           const kat = item.kategori || "Lainnya";
+           if (!rekapKategori[kat]) rekapKategori[kat] = 0;
+           rekapKategori[kat] += item.harga;
+           totalSeluruhPengeluaran += item.harga; // <--- Tambahkan setiap harga ke total
+       });
 
-    const labelKategori = Object.keys(rekapKategori);
-    const dataKategori = Object.values(rekapKategori);
+       const labelKategoriAsli = Object.keys(rekapKategori);
+       const dataKategori = Object.values(rekapKategori);
+       
+       // 👇 LOGIKA BARU: Membuat label ber-persentase 👇
+       const labelDenganPersen = labelKategoriAsli.map((label, index) => {
+           const nominal = dataKategori[index];
+           // Rumus persen: (nominal / total) * 100, lalu dibulatkan
+           const persen = Math.round((nominal / totalSeluruhPengeluaran) * 100); 
+           return `${label} (${persen}%)`; // Hasilnya misal: "Transportasi (45%)"
+       });
+       
+       // Warna-warni cantik untuk tiap potongan kue
+       const warnaPie = ['#ff8787', '#4dabf7', '#51cf66', '#fcc419', '#cc5de8', '#ff922b'];
 
-    // Warna-warni cantik untuk tiap potongan kue
-    const warnaPie = ['#ff8787', '#4dabf7', '#51cf66', '#fcc419', '#cc5de8', '#ff922b'];
+       if (chartKategori) chartKategori.destroy();
 
-    if (chartKategori) chartKategori.destroy();
-
-    chartKategori = new window.Chart(ctxPie, {
-        type: 'pie',
-        data: {
-            labels: labelKategori,
-            datasets: [{
-                data: dataKategori,
-                backgroundColor: warnaPie,
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'bottom' } }
-        }
-    });
+       chartKategori = new window.Chart(ctxPie, {
+           type: 'pie',
+           data: {
+               labels: labelDenganPersen, // <--- Gunakan label yang baru di sini
+               datasets: [{
+                   data: dataKategori,
+                   backgroundColor: warnaPie,
+                   borderWidth: 1
+               }]
+           },
+           options: {
+               responsive: true,
+               plugins: { legend: { position: 'bottom' } }
+           }
+       });
 }
 
 // 4. Fungsi Download PDF jsPDF

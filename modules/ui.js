@@ -110,11 +110,25 @@ export function renderLayarUtama() {
             
             if (tampilkan) {
                 jumlahTampil++;
+                
+                // 👇 LOGIKA BARU: DETEKSI LINK (URL) 👇
+                let teksPlatform = bersihkanTeks(p);
+                let elemenPlatform = teksPlatform;
+                
+                // Cek apakah teks diawali dengan http:// atau https://
+                if (teksPlatform.toLowerCase().startsWith('http://') || teksPlatform.toLowerCase().startsWith('https://')) {
+                    // Jika iya, ubah jadi tag <a> agar bisa diklik dan buka di tab baru (_blank)
+                    elemenPlatform = `<a href="${teksPlatform}" target="_blank" rel="noopener noreferrer" style="color: #20c997; text-decoration: none; cursor: pointer;" title="Buka Link">${teksPlatform}</a>`;
+                }
+                // 👆 -------------------------------- 👆
+
                 htmlAkun += `
                     <li class="item-akun">
                         <div class="header-kartu" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                             
-                            <div style="font-weight:bold; color:#20c997; font-size:14px; flex: 1; min-width: 0; word-break: break-all; margin-right: 10px;">💻 ${bersihkanTeks(p)}</div>
+                            <div style="font-weight:bold; color:#20c997; font-size:14px; flex: 1; min-width: 0; word-break: break-all; margin-right: 10px;">
+                                💻 ${elemenPlatform}
+                            </div>
                             
                             <div class="grup-tombol-kecil" style="flex-shrink: 0;">
                                 <button class="btn-aksi btn-hapus" data-id="${data.id}" data-jenis="akun" title="Hapus">🗑️</button>
