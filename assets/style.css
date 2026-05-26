@@ -424,3 +424,148 @@
                     display: none; /* Sembunyikan tulisan petunjuk swipe di laptop */
                 }
             }
+
+            /* =====================================================================
+   🔥 OVERRIDE TEMA NEO-BRUTALISM NFT MARKETPLACE 🔥
+   Letakkan di paling bawah file style.css
+   ===================================================================== */
+
+/* 1. Latar Belakang (Off-white dengan pola titik halus) */
+body {
+    background-color: #FDFDF9 !important;
+    background-image: radial-gradient(#d5d5d5 1px, transparent 1px) !important;
+    background-size: 20px 20px !important;
+    color: #000 !important;
+}
+
+/* 2. Panel Utama & Modal (Kotak kaku dengan border tebal) */
+.kotak-utama,
+.modal-kartu,
+#wadahGrafik {
+    background-color: #ffffff !important;
+    border: 3px solid #000 !important;
+    box-shadow: 6px 6px 0px #000 !important;
+    border-radius: 12px !important;
+}
+
+/* 3. Tab Navigasi (Aktif akan pop-out dengan warna Lime) */
+.btn-tab {
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+.btn-tab.aktif {
+    background-color: #D4FF3F !important;
+    border: 2px solid #000 !important;
+    box-shadow: 4px 4px 0px #000 !important;
+    transform: translateY(-2px);
+    color: #000 !important;
+    font-weight: 800 !important;
+}
+
+/* 4. Form Input, Select, Textarea & Pencarian */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+textarea,
+select,
+.input-pin-master {
+    background-color: #ffffff !important;
+    border: 2px solid #000 !important;
+    box-shadow: 3px 3px 0px #000 !important;
+    border-radius: 8px !important;
+    color: #000 !important;
+    outline: none !important;
+    font-weight: 500;
+}
+
+input:focus, textarea:focus, select:focus {
+    background-color: #f4fce3 !important; /* Efek highlight saat mengetik */
+}
+
+/* 4b. Khusus Kotak Pencarian (Agar Tidak Dobel Box) */
+.kotak-cari-ikon {
+    background-color: #ffffff !important;
+    border: 2px solid #000 !important;
+    box-shadow: 3px 3px 0px #000 !important;
+    border-radius: 8px !important;
+    /* Hilangkan background abu-abu bawaan sebelumnya jika ada */
+}
+
+.kotak-cari-ikon input[type="text"] {
+    /* Matikan garis dan bayangan untuk input yang ada di DALAM kotak pencarian */
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+.kotak-cari-ikon input[type="text"]:focus {
+    /* Matikan efek warna highlight agar tidak aneh saat diklik */
+    background-color: transparent !important; 
+}
+
+/* 5. Tombol Utama (Borders, Hard Shadows & Teks Hitam) */
+button {
+    font-weight: 700 !important;
+    color: #000 !important; /* Teks harus kontras */
+    transition: all 0.1s ease-in-out !important;
+}
+.btn-simpan,
+.btn-tambah-mobile,
+#btnLogin,
+#btnBukaSebulan,
+#btnDownloadPDF,
+#btnTambahAkun {
+    border: 2px solid #000 !important;
+    box-shadow: 4px 4px 0px #000 !important;
+}
+#btnLogin, #btnBukaSebulan {
+    background-color: #D4FF3F !important;
+}
+
+/* Tombol Batal */
+#btnBatalCatatan, #btnBatalPengeluaran, #btnBatalAkun, 
+#btnBatalEdit, #btnBatalEditPengeluaran {
+    background-color: #f1f3f5 !important;
+    border: 2px solid #000 !important;
+    box-shadow: 3px 3px 0px #000 !important;
+}
+
+/* Efek Tombol Ditekan (Fisik) */
+.btn-simpan:active, .btn-tambah-mobile:active, #btnLogin:active,
+#btnBukaSebulan:active, #btnBatalCatatan:active, #btnBatalPengeluaran:active, 
+#btnBatalAkun:active, .btn-nav-tgl:active, .btn-kembali:active, 
+.btn-logout:active, .btn-suara:active {
+    box-shadow: 1px 1px 0px #000 !important;
+    transform: translate(3px, 3px) !important;
+}
+
+/* 6. Kartu Ringkasan (Pengeluaran Hari/Bulan Ini) */
+.kotak-ringkasan {
+    border: 3px solid #000 !important;
+    box-shadow: 5px 5px 0px #000 !important;
+    border-radius: 12px !important;
+}
+.kotak-hari { background-color: #ffe3e3 !important; }
+.kotak-bulan { background-color: #d0ebff !important; }
+
+/* 7. Kartu Item (Data yang dihasilkan oleh ui.js) */
+/* Ini akan otomatis menargetkan setiap elemen list kartu Anda */
+.daftar-kartu > * {
+    background-color: #ffffff !important;
+    border: 2px solid #000 !important;
+    box-shadow: 4px 4px 0px #000 !important;
+    border-radius: 10px !important;
+    transition: transform 0.2s ease;
+    margin-bottom: 12px;
+}
+.daftar-kartu > *:hover {
+    transform: translate(-2px, -2px) !important;
+    box-shadow: 6px 6px 0px #000 !important;
+}
+
+/* Memperbaiki Ikon Delete/Edit yang dihasilkan JS agar sesuai tema */
+.daftar-kartu button {
+    border: 1.5px solid #000 !important;
+    box-shadow: 2px 2px 0px #000 !important;
+    background-color: #fff !important;
+}
