@@ -480,7 +480,7 @@ select,
 }
 
 input:focus, textarea:focus, select:focus {
-    background-color: #f4fce3 !important; /* Efek highlight saat mengetik */
+    background-color: #f4fce3 !important; 
 }
 
 /* 4b. Khusus Kotak Pencarian (Agar Tidak Dobel Box) */
@@ -499,7 +499,6 @@ input:focus, textarea:focus, select:focus {
     background-color: transparent !important;
 }
 .kotak-cari-ikon input[type="text"]:focus {
-    /* Matikan efek warna highlight agar tidak aneh saat diklik */
     background-color: transparent !important; 
 }
 
