@@ -593,3 +593,30 @@ button {
         top: 5px !important; /* Memberi jarak aman saat di-scroll */
     }
 }
+#boxTotalBulan {
+    transition: all 0.2s ease-in-out !important;
+}
+#boxTotalBulan:hover {
+    background-color: #a5d8ff !important; /* Warna biru sedikit lebih gelap */
+    transform: translate(-2px, -2px) !important; /* Efek melayang */
+    box-shadow: 7px 7px 0px #000 !important;
+}
+#boxTotalBulan:active {
+    transform: translate(3px, 3px) !important; /* Efek tertekan ke bawah */
+    box-shadow: 2px 2px 0px #000 !important;
+}
+
+/* Menghilangkan bingkai dan bayangan pada pesan kosong */
+.pesan-kosong {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    transform: none !important;
+    padding: 10px !important;
+}
+
+/* Memastikan tidak ada efek saat kursor diarahkan (hover) */
+.pesan-kosong:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
