@@ -586,7 +586,7 @@ button {
 /* --- PAKSA JARAK ATAS MOBILE --- */
 @media (max-width: 500px) {
     body {
-        padding-top: 25px !important; /* Mendorong semua isi web ke bawah */
+        padding-top: 10px !important; /* Mendorong semua isi web ke bawah */
     }
     #areaUtama > .kotak-utama {
         margin-top: 0px !important; /* Mematikan tarikan ke atas */
