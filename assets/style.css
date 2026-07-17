@@ -104,7 +104,12 @@
         .label-ringkasan { font-size: 13px; font-weight: bold; margin-bottom: 5px; }
         .angka-ringkasan { font-size: 22px; font-weight: bold; }
 
-        .box-peringatan { background: #fff9db; border: 1px solid #fcc419; color: #b08100; padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 12px; font-weight: bold; display: flex; flex-direction: column; gap: 5px; }
+        .box-peringatan { background-color: #fff3bf !important; border: 1px solid #fcc419; color: #b08100; padding: 8px; border-radius: 5px; margin-bottom: 12px; font-size: 12px; font-weight: bold; display: flex; flex-direction: column; gap: 5px; }
+        .box-peringatan span {
+            font-weight: 800 !important;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
         .input-pin-master { width: 100%; border: 1px dashed #fcc419 !important; text-align: center; font-size: 14px; letter-spacing: 3px; background: white; }
 
         .bagian-aplikasi { display: none; }
@@ -169,6 +174,9 @@
             #wadahInputAkun .btn-simpan {
                 margin: 0 auto;
                 min-width: 200px;
+            }
+                #btnSuaraCatatan {
+                display: none !important;
             }
         }
 
@@ -513,9 +521,12 @@ button {
 #btnLogin,
 #btnBukaSebulan,
 #btnDownloadPDF,
-#btnTambahAkun {
+#btnTambahAkun,
+.btn-nav-tgl,            
+.pilih-tanggal-wrapper   {
     border: 2px solid #000 !important;
     box-shadow: 4px 4px 0px #000 !important;
+    background-color: #fff !important; 
 }
 #btnLogin, #btnBukaSebulan {
     background-color: #D4FF3F !important;
