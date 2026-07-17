@@ -187,9 +187,9 @@
             /* -- 1. HEADER & PENCARIAN LENGKET -- */
             #areaUtama > .kotak-utama {
                 position: sticky;
-                top: -10px; /* Naik menempel rapat ke ujung layar */
-                margin-top: -10px; /* Menarik kotak ke atas menutupi celah */
-                padding-top: 25px; /* Menyesuaikan jarak dalam agar rapi */
+                top: 15px;       
+                margin-top: 10px;  
+                padding-top: 25px;
                 z-index: 90;
                 box-shadow: 0 10px 20px rgba(0,0,0,0.08); 
             }
