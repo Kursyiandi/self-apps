@@ -281,6 +281,19 @@ el.btnBatalEditPengeluaran.addEventListener('click', () => {
 // EVENT LISTENER: REKAP & GRAFIK (BULANAN)
 // ==========================================
 el.btnBukaSebulan.addEventListener('click', () => {
+    if (state.modeAktif === 'catatan') {
+        el.areaUtama.style.display = 'none'; 
+        el.areaBulanan.style.display = 'block';
+        updateDropdownBulan(el.inputTanggal.value); 
+        el.inputBulanRekap.value = el.inputTanggal.value.substring(0, 7); 
+        renderLayarBulanan();
+    } else if (state.modeAktif === 'pengeluaran') {
+        // Form muncul, tapi tombol tetap diam di tempatnya
+        el.wadahInputPengeluaran.classList.add('tampil');
+        el.inputNamaPengeluaran.focus();
+    }
+});
+el.boxTotalBulan.addEventListener('click', () => {
     el.areaUtama.style.display = 'none'; 
     el.areaBulanan.style.display = 'block';
     updateDropdownBulan(el.inputTanggal.value); 
@@ -316,14 +329,8 @@ el.btnBatalCatatan.addEventListener('click', () => {
     el.inputCatatan.style.height = "44px"; 
 });
 
-el.btnTambahPengeluaran.addEventListener('click', () => {
-    el.wadahInputPengeluaran.classList.add('tampil');
-    el.btnTambahPengeluaran.style.display = 'none';
-    el.inputNamaPengeluaran.focus();
-});
 el.btnBatalPengeluaran.addEventListener('click', () => {
     el.wadahInputPengeluaran.classList.remove('tampil');
-    el.btnTambahPengeluaran.style.display = 'block';
     el.inputNamaPengeluaran.value = ""; 
     el.inputNominalPengeluaran.value = ""; 
 });
