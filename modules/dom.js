@@ -47,6 +47,7 @@ export const el = {
     inputKategoriPengeluaran: document.getElementById('inputKategoriPengeluaran'),
     btnBatalPengeluaran: document.getElementById('btnBatalPengeluaran'),
     btnSimpanPengeluaran: document.getElementById('btnSimpanPengeluaran'),
+    boxTotalBulan: document.getElementById('boxTotalBulan'),
     
     // 7. Form Akun
     inputPinMaster: document.getElementById('inputPinMaster'),
