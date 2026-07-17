@@ -583,3 +583,9 @@ button {
     background-color: #20c997 !important; 
     color: #000 !important;
 }
+@media (max-width: 500px) {
+    #areaUtama > .kotak-utama {
+        top: 15px !important;
+        margin-top: 10px !important;
+    }
+}
