@@ -187,6 +187,13 @@ el.daftarItem.addEventListener('click', async function(e) {
         el.modalEditPengeluaran.style.display = 'block';
         state.idPengeluaranEditAktif = idItem; 
     }
+    if(btn.classList.contains('btn-edit') && jenis === 'catatan') {
+        const teksLama = btn.closest('li').querySelector('.isi-teks').innerText;
+        el.inputEditCatatan.value = teksLama;
+        el.overlayModal.style.display = 'block';
+        el.modalEdit.style.display = 'block';
+        state.idCatatanEditAktif = idItem; 
+    }
     
     // Fitur Lihat/Copy Password
     if(btn.classList.contains('btn-lihat') || btn.classList.contains('btn-copy')) {
