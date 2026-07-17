@@ -10,14 +10,9 @@ import { simpanAkun, hapusAkun } from './akun.js';
 import { dekripsi, showToast } from './helper.js';
 import { updateDropdownBulan, renderLayarBulanan, downloadPDF } from './rekap.js';
 import { el } from './dom.js';
-
-
-// 1. Inisialisasi Tanggal Hari Ini
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; 
 el.inputTanggal.value = (new Date(Date.now() - tzoffset)).toISOString().slice(0, 10);
 updateTanggalHeader(); 
-
-// 2. Fungsi Utama: Menarik semua data setelah Login
 async function initData() {
     console.log("Sedang menarik data dari Supabase...");
     await Promise.all([
@@ -26,12 +21,9 @@ async function initData() {
         fetchAkun()
     ]);
     console.log("Data berhasil ditarik!");
-    renderLayarUtama(); // Gambar data ke layar
+    renderLayarUtama();
 }
-
-// 3. Menjalankan Pemantau Sesi (Login/Logout)
 initAuth(
-    // JIKA LOGIN SUKSES
     () => {
         el.areaLogin.style.display = 'none';
         el.areaApp.style.display = 'block';
@@ -42,47 +34,31 @@ initAuth(
             setTimeout(() => { initData(); }, 150); 
         }
     },
-    // JIKA LOGOUT
     () => {
         el.areaLogin.style.display = 'block';
         el.areaApp.style.display = 'none';
         el.infoUser.innerText = "";
     }
 );
-
-// 4. Pasang Event Listener Tombol Utama
 el.btnLogin.addEventListener('click', login);
 el.btnLogout.addEventListener('click', logout);
-
-// Event Listener Tab Menu
 el.btnMenuCatatan.addEventListener('click', () => gantiTab('catatan'));
 el.btnMenuPengeluaran.addEventListener('click', () => gantiTab('pengeluaran'));
 el.btnMenuAkun.addEventListener('click', () => gantiTab('akun'));
-
-// ==========================================
-// EVENT LISTENER TANGGAL & PENCARIAN
-// ==========================================
-
-// Fungsi untuk maju/mundur hari
 function ubahTanggalHari(selisih) {
     const tgl = el.inputTanggal.value;
     if(!tgl) return;
-    
     const dateObj = new Date(tgl);
     dateObj.setDate(dateObj.getDate() + selisih);
-    
     const year = dateObj.getFullYear();
     const month = String(dateObj.getMonth() + 1).padStart(2, '0');
     const day = String(dateObj.getDate()).padStart(2, '0');
-    
     el.inputTanggal.value = `${year}-${month}-${day}`;
     updateTanggalHeader(); 
     renderLayarUtama();   
 }
-
 el.btnPrevTanggal.addEventListener('click', () => ubahTanggalHari(-1));
 el.btnNextTanggal.addEventListener('click', () => ubahTanggalHari(1));
-
 el.inputTanggal.addEventListener('change', () => { 
     updateTanggalHeader(); 
     renderLayarUtama(); 
@@ -90,14 +66,9 @@ el.inputTanggal.addEventListener('change', () => {
 el.inputCari.addEventListener('input', () => {
     renderLayarUtama();
 });
-
-// --- EVENT LISTENER SIMPAN DATA ---
-
-// 1. Simpan Catatan
 el.btnSimpanCatatan.addEventListener('click', async () => {
     const teks = el.inputCatatan.value.trim();
     const tgl = el.inputTanggal.value;
-    
     const sukses = await simpanCatatan(teks, tgl);
     if (sukses) {
         el.inputCatatan.value = ""; 
@@ -105,44 +76,30 @@ el.btnSimpanCatatan.addEventListener('click', async () => {
         renderLayarUtama();
     }
 });
-
-// 2. Simpan Pengeluaran
 el.btnSimpanPengeluaran.addEventListener('click', async () => {
     const nama = el.inputNamaPengeluaran.value.trim();
     const nominal = el.inputNominalPengeluaran.value;
-    
-    // Pastikan baris ini ADA untuk menangkap nilai dari kotak pilihan HTML
     const kategori = el.inputKategoriPengeluaran.value; 
-    
     const tgl = el.inputTanggal.value;
-    
-    // Pastikan variabel 'kategori' ikut dikirim ke dalam fungsi
     const sukses = await simpanPengeluaran(nama, nominal, kategori, tgl);
-    
     if (sukses) {
         el.inputNamaPengeluaran.value = ""; 
         el.inputNominalPengeluaran.value = "";
         renderLayarUtama();
     }
 });
-
-// 3. Simpan Akun
 el.btnSimpanAkun.addEventListener('click', async () => {
     const platform = el.inputNamaPlatform.value.trim();
     const username = el.inputUsername.value.trim();
     const password = el.inputPasswordAkun.value;
     const pinMaster = el.inputPinMaster.value;
-    
     const sukses = await simpanAkun(platform, username, password, pinMaster);
     if (sukses) {
         el.inputNamaPlatform.value = ""; el.inputUsername.value = ""; el.inputPasswordAkun.value = "";
         renderLayarUtama();
     }
 });
-
-// --- EVENT LISTENER DELEGATION (Klik Daftar Item: Hapus, Edit, Copy, Lihat) ---
 el.daftarItem.addEventListener('click', async function(e) {
-    // Fitur Copy Username
     const elUsername = e.target.closest('.teks-username-akun');
     if (elUsername) {
         const usernameAsli = elUsername.getAttribute('title'); 
@@ -151,38 +108,26 @@ el.daftarItem.addEventListener('click', async function(e) {
         }
         return;
     }
-
     const btn = e.target.closest('button');
     if (!btn) return;
-    
     const idItem = btn.getAttribute('data-id');
     const jenis = btn.getAttribute('data-jenis'); 
-    
-    // Fitur Hapus
     if(btn.classList.contains('btn-hapus')) {
         if(confirm("Yakin ingin menghapus data ini?")) {
             let sukses = false;
             if (jenis === 'catatan') sukses = await hapusCatatan(idItem);
             else if (jenis === 'pengeluaran') sukses = await hapusPengeluaran(idItem);
             else if (jenis === 'akun') sukses = await hapusAkun(idItem);
-            
             if (sukses) renderLayarUtama();
         }
     }
-    
-    // Fitur Buka Modal Edit Catatan
     if(btn.classList.contains('btn-edit') && jenis === 'pengeluaran') {
-        // Ambil data lama dari atribut HTML yang kita pasang di ui.js
         const namaLama = btn.getAttribute('data-nama');
         const hargaLama = btn.getAttribute('data-harga');
         const kategoriLama = btn.getAttribute('data-kategori');
-        
-        // Isi form modal dengan data lama
         el.inputEditNamaPengeluaran.value = namaLama;
         el.inputEditNominalPengeluaran.value = hargaLama;
         el.inputEditKategoriPengeluaran.value = kategoriLama;
-        
-        // Tampilkan modal
         el.overlayModal.style.display = 'block';
         el.modalEditPengeluaran.style.display = 'block';
         state.idPengeluaranEditAktif = idItem; 
@@ -194,16 +139,12 @@ el.daftarItem.addEventListener('click', async function(e) {
         el.modalEdit.style.display = 'block';
         state.idCatatanEditAktif = idItem; 
     }
-    
-    // Fitur Lihat/Copy Password
     if(btn.classList.contains('btn-lihat') || btn.classList.contains('btn-copy')) {
         const teksAcak = btn.getAttribute('data-pass');
         const pinMaster = el.inputPinMaster.value;
         if (!pinMaster) { showToast("Isi PIN Master di atas!", "error"); return; }
-        
         const hasilDekripsi = dekripsi(teksAcak, pinMaster);
         if (!hasilDekripsi) { showToast("Gagal! PIN Master salah.", "error"); return; }
-        
         if(btn.classList.contains('btn-lihat')) {
             const elRahasia = btn.closest('li').querySelector('.teks-rahasia');
             if (btn.innerText.includes('👁️')) {
@@ -218,14 +159,11 @@ el.daftarItem.addEventListener('click', async function(e) {
         }
     }
 });
-
-// Event Listener Modal Edit Catatan
 el.btnBatalEdit.addEventListener('click', () => {
     el.overlayModal.style.display = 'none'; 
     el.modalEdit.style.display = 'none';
     state.idCatatanEditAktif = null;
 });
-
 el.btnSimpanEdit.addEventListener('click', async () => {
     const teksBaru = el.inputEditCatatan.value.trim();
     if (teksBaru && state.idCatatanEditAktif) {
@@ -238,19 +176,15 @@ el.btnSimpanEdit.addEventListener('click', async () => {
         }
     }
 });
-
-// Event Listener Modal Edit Pengeluaran
 el.btnBatalEditPengeluaran.addEventListener('click', () => {
     el.overlayModal.style.display = 'none'; 
     el.modalEditPengeluaran.style.display = 'none';
     state.idPengeluaranEditAktif = null;
 });
-
 el.btnSimpanEditPengeluaran.addEventListener('click', async () => {
     const namaBaru = el.inputEditNamaPengeluaran.value.trim();
     const hargaBaru = el.inputEditNominalPengeluaran.value;
     const kategoriBaru = el.inputEditKategoriPengeluaran.value;
-
     if (state.idPengeluaranEditAktif) {
         const sukses = await updatePengeluaran(state.idPengeluaranEditAktif, namaBaru, hargaBaru, kategoriBaru);
         if (sukses) {
@@ -261,25 +195,16 @@ el.btnSimpanEditPengeluaran.addEventListener('click', async () => {
         }
     }
 });
-
-// Event Listener Modal Edit Pengeluaran
 el.btnBatalEditPengeluaran.addEventListener('click', () => {
     el.overlayModal.style.display = 'none'; 
     el.modalEditPengeluaran.style.display = 'none';
     state.idPengeluaranEditAktif = null;
 });
-
-// Event Listener Modal Edit Pengeluaran
 el.btnBatalEditPengeluaran.addEventListener('click', () => {
     el.overlayModal.style.display = 'none'; 
     el.modalEditPengeluaran.style.display = 'none';
     state.idPengeluaranEditAktif = null;
 });
-
-
-// ==========================================
-// EVENT LISTENER: REKAP & GRAFIK (BULANAN)
-// ==========================================
 el.btnBukaSebulan.addEventListener('click', () => {
     if (state.modeAktif === 'catatan') {
         el.areaUtama.style.display = 'none'; 
@@ -288,7 +213,6 @@ el.btnBukaSebulan.addEventListener('click', () => {
         el.inputBulanRekap.value = el.inputTanggal.value.substring(0, 7); 
         renderLayarBulanan();
     } else if (state.modeAktif === 'pengeluaran') {
-        // Form muncul, tapi tombol tetap diam di tempatnya
         el.wadahInputPengeluaran.classList.add('tampil');
         el.inputNamaPengeluaran.focus();
     }
@@ -300,14 +224,9 @@ el.boxTotalBulan.addEventListener('click', () => {
     el.inputBulanRekap.value = el.inputTanggal.value.substring(0, 7); 
     renderLayarBulanan();
 });
-
 el.inputBulanRekap.addEventListener('change', renderLayarBulanan);
 el.btnKembali.addEventListener('click', () => { el.areaBulanan.style.display = 'none'; el.areaUtama.style.display = 'block'; });
 el.btnDownloadPDF.addEventListener('click', downloadPDF);
-
-// ==========================================
-// EVENT LISTENER: UX MOBILE & ANIMASI UI
-// ==========================================
 function autoResize() {
     if (this.value === "") { this.style.height = '44px'; return; }
     this.style.height = '44px'; 
@@ -315,8 +234,6 @@ function autoResize() {
 }
 el.inputCatatan.addEventListener('input', autoResize);
 el.inputEditCatatan.addEventListener('input', autoResize);
-
-// Mobile Toggles
 el.btnTambahCatatan.addEventListener('click', () => {
     el.wadahInputCatatan.classList.add('tampil');
     el.btnTambahCatatan.style.display = 'none';
@@ -328,13 +245,11 @@ el.btnBatalCatatan.addEventListener('click', () => {
     el.inputCatatan.value = ""; 
     el.inputCatatan.style.height = "44px"; 
 });
-
 el.btnBatalPengeluaran.addEventListener('click', () => {
     el.wadahInputPengeluaran.classList.remove('tampil');
     el.inputNamaPengeluaran.value = ""; 
     el.inputNominalPengeluaran.value = ""; 
 });
-
 el.btnTambahAkun.addEventListener('click', () => {
     el.wadahInputAkun.classList.add('tampil');
     el.btnTambahAkun.style.display = 'none';
@@ -347,23 +262,16 @@ el.btnBatalAkun.addEventListener('click', () => {
     el.inputUsername.value = ""; 
     el.inputPasswordAkun.value = ""; 
 });
-
-// ==========================================
-// EVENT LISTENER: WEB SPEECH API (VOICE NOTE)
-// ==========================================
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'id-ID'; recognition.interimResults = false;
-    
-    el.btnSuaraCatatan.addEventListener('click', () => {
+        el.btnSuaraCatatan.addEventListener('click', () => {
         if (el.btnSuaraCatatan.classList.contains('merekam')) {
             recognition.stop();
             el.btnSuaraCatatan.classList.remove('merekam'); 
             el.btnSuaraCatatan.innerText = "🎤";
             showToast("Batal merekam", "normal");
-            
             if (window.innerWidth <= 500 && el.wadahInputCatatan.classList.contains('tampil') && el.inputCatatan.value.trim() === '') {
                 el.wadahInputCatatan.classList.remove('tampil');
                 el.btnTambahCatatan.style.display = 'block';
@@ -373,14 +281,12 @@ if (SpeechRecognition) {
             el.btnSuaraCatatan.classList.add('merekam'); 
             el.btnSuaraCatatan.innerText = "🔴"; 
             showToast("Silakan bicara...", "normal"); 
-            
             if (window.innerWidth <= 500 && !el.wadahInputCatatan.classList.contains('tampil')) {
                 el.wadahInputCatatan.classList.add('tampil');
                 el.btnTambahCatatan.style.display = 'none';
             }
         }
     });
-    
     recognition.onresult = (event) => {
         const hasil = event.results[0][0].transcript;
         el.inputCatatan.value = el.inputCatatan.value ? el.inputCatatan.value + " " + hasil : hasil;
@@ -388,28 +294,20 @@ if (SpeechRecognition) {
         el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤";
         showToast("Suara ditangkap!", "success");
     };
-    
     recognition.onerror = () => { el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤"; };
     recognition.onend = () => { el.btnSuaraCatatan.classList.remove('merekam'); el.btnSuaraCatatan.innerText = "🎤"; };
 } else { 
     el.btnSuaraCatatan.style.display = 'none'; 
 }
-
 el.btnSimpanEditPengeluaran.addEventListener('click', async () => {
-    // 1. Cek apakah tombol merespon klik
     console.log("Tombol simpan edit diklik!"); 
-
     const namaBaru = el.inputEditNamaPengeluaran.value.trim();
     const hargaBaru = el.inputEditNominalPengeluaran.value;
     const kategoriBaru = el.inputEditKategoriPengeluaran.value;
-
-    // 2. Cek apakah ID pengeluaran berhasil ditangkap
     console.log("ID yang mau diedit:", state.idPengeluaranEditAktif);
-
     if (state.idPengeluaranEditAktif) {
-        console.log("Mulai proses update ke Supabase..."); // 3. Cek proses
+        console.log("Mulai proses update ke Supabase..."); 
         const sukses = await updatePengeluaran(state.idPengeluaranEditAktif, namaBaru, hargaBaru, kategoriBaru);
-        
         if (sukses) {
             console.log("Update berhasil, menutup modal!");
             el.overlayModal.style.display = 'none'; 
