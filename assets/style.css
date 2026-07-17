@@ -589,8 +589,8 @@ button {
         padding-top: 10px !important; /* Mendorong semua isi web ke bawah */
     }
     #areaUtama > .kotak-utama {
-        margin-top: 0px !important; /* Mematikan tarikan ke atas */
-        top: 5px !important; /* Memberi jarak aman saat di-scroll */
+        margin-top: 5px !important; /* Mematikan tarikan ke atas */
+        top: -5px !important; /* Memberi jarak aman saat di-scroll */
     }
 }
 #boxTotalBulan {
