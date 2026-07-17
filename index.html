@@ -99,7 +99,7 @@
 
                 <div id="halamanPengeluaran" class="bagian-aplikasi">
                     <div class="area-ringkasan">
-                        <div class="kotak-ringkasan kotak-hari">
+                        <div id="boxTotalBulan" class="kotak-ringkasan kotak-bulan" style="cursor: pointer;" title="Klik untuk lihat Rekap Bulanan">
                             <div class="label-ringkasan">Pengeluaran Hari Ini</div>
                             <div id="angkaTotalHari" class="angka-ringkasan">Rp 0</div>
                         </div>
@@ -109,11 +109,7 @@
                         </div>
                     </div>
 
-                    <!-- 🔴 TOMBOL TAMBAH KHUSUS MOBILE (Aksen Merah) -->
-                    <button id="btnTambahPengeluaran" class="btn-tambah-mobile" style="color: #e03131; background: #fff5f5; border-color: #ff8787;">➕ Catat Pengeluaran Baru</button>
-                    
-                    <!-- 🔴 WADAH INPUT & TOMBOL (Bisa Sembunyi) -->
-                    <!-- WADAH INPUT PENGELUARAN (Tampilan Mobile) -->
+    
                     <div id="wadahInputPengeluaran" class="wadah-input-pengeluaran">
                         <div class="input-group" style="margin-bottom: 10px;">
                             <input type="text" id="inputNamaPengeluaran" placeholder="Nama Barang (Misal: Kopi)">
