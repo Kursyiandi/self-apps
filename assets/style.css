@@ -583,9 +583,13 @@ button {
     background-color: #20c997 !important; 
     color: #000 !important;
 }
+/* --- PAKSA JARAK ATAS MOBILE --- */
 @media (max-width: 500px) {
+    body {
+        padding-top: 25px !important; /* Mendorong semua isi web ke bawah */
+    }
     #areaUtama > .kotak-utama {
-        top: 15px !important;
-        margin-top: 10px !important;
+        margin-top: 0px !important; /* Mematikan tarikan ke atas */
+        top: 15px !important; /* Memberi jarak aman saat di-scroll */
     }
 }
