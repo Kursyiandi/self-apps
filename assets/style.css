@@ -579,3 +579,7 @@ button {
     box-shadow: 2px 2px 0px #000 !important;
     background-color: #fff !important;
 }
+#btnSimpanAkun {
+    background-color: #20c997 !important; 
+    color: #000 !important;
+}
