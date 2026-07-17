@@ -4,30 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Self Apps Supabase</title>
-    
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4dabf7">
     <link rel="icon" href="logo.png" type="image/png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Self Apps">
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-
-    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="stylesheet" href="/assets/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-
 <div class="container">
     <div id="areaLogin" class="kotak-utama">
         <h2>Self Apps 🔒</h2>
         <p style="color: #6c757d; margin-bottom: 20px;">Silakan masuk untuk melanjutkan.</p>
         <button id="btnLogin" class="btn-google">Masuk dengan Google</button>
     </div>
-
     <div id="areaApp">
         <div id="areaUtama">
             <div class="kotak-utama">
@@ -43,8 +38,7 @@
                             </svg>
                         </button>
                     </div>
-                </div>
-                
+                </div>               
                 <div class="nav-menu">
                     <div class="grup-tab">
                         <button id="btnMenuCatatan" class="btn-tab aktif">
@@ -57,8 +51,7 @@
                             <span class="icon-tab">🔑</span> <span class="teks-tab">Akun</span>
                         </button>
                     </div>
-                </div>
-                
+                </div>              
                 <div class="kontrol-tanggal">
                     <div id="wadahNavTanggal" class="grup-nav-tanggal">
                         <button id="btnPrevTanggal" class="btn-nav-tgl" title="Hari Sebelumnya">❮</button>
@@ -68,27 +61,18 @@
                         </div>
                         <button id="btnNextTanggal" class="btn-nav-tgl" title="Hari Selanjutnya">❯</button>
                     </div>
-
                     <div id="wadahCari" class="kotak-cari-ikon">
                         <span>🔍</span>
                         <input type="text" id="inputCariItem" placeholder="Cari data...">
                     </div>
                     <button id="btnBukaSebulan" class="btn-mode-waktu">Catatan Bulan Ini</button>
-                </div>
-                
+                </div>               
                 <div id="halamanCatatan" class="bagian-aplikasi aktif">
-                    <!-- Tombol Tambah (Hanya akan muncul di HP) -->
-                    <button id="btnTambahCatatan" class="btn-tambah-mobile">➕ Buat Catatan Baru</button>
-                    
+                    <button id="btnTambahCatatan" class="btn-tambah-mobile">➕ Buat Catatan Baru</button>        
                     <div class="input-group">
-                        <!-- Tombol Mic dipisah agar bisa melayang -->
                         <button id="btnSuaraCatatan" class="btn-suara" title="Ketik dengan Suara">🎤</button>
-                        
-                        <!-- Wadah untuk menyembunyikan Input & Tombol Simpan -->
                         <div id="wadahInputCatatan" class="wadah-input-catatan">
                             <textarea id="inputCatatan" placeholder="Tulis catatan"></textarea>
-                            
-                            <!-- 🔴 KODE BARU: Bungkus tombol agar bersebelahan -->
                             <div class="grup-tombol-simpan">
                                 <button id="btnBatalCatatan">Batal</button>
                                 <button id="btnSimpanCatatan" class="btn-simpan">Simpan</button>
@@ -96,27 +80,22 @@
                         </div>
                     </div>
                 </div>
-
                 <div id="halamanPengeluaran" class="bagian-aplikasi">
                     <div class="area-ringkasan">
-                        <div id="boxTotalBulan" class="kotak-ringkasan kotak-bulan" style="cursor: pointer;" title="Klik untuk lihat Rekap Bulanan">
+                        <div class="kotak-ringkasan kotak-hari">
                             <div class="label-ringkasan">Pengeluaran Hari Ini</div>
                             <div id="angkaTotalHari" class="angka-ringkasan">Rp 0</div>
                         </div>
-                        <div class="kotak-ringkasan kotak-bulan">
+                        <div id="boxTotalBulan" class="kotak-ringkasan kotak-bulan" style="cursor: pointer;" title="Klik untuk lihat Rekap Bulanan">
                             <div class="label-ringkasan">Pengeluaran Bulan Ini</div>
                             <div id="angkaTotalBulan" class="angka-ringkasan">Rp 0</div>
                         </div>
                     </div>
-
-    
                     <div id="wadahInputPengeluaran" class="wadah-input-pengeluaran">
                         <div class="input-group" style="margin-bottom: 10px;">
                             <input type="text" id="inputNamaPengeluaran" placeholder="Nama Barang (Misal: Kopi)">
                             <input type="number" id="inputNominalPengeluaran" placeholder="Harga (Misal: 15000)">
                         </div>
-                        
-                        <!-- 👇 TAMBAHKAN KOTAK PILIHAN KATEGORI DI SINI 👇 -->
                         <select id="inputKategoriPengeluaran" style="width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 8px; margin-bottom: 15px; font-size: 15px; outline: none; background: white;">
                             <option value="Makanan">🍔 Makanan & Minuman</option>
                             <option value="Transportasi">🚗 Transportasi</option>
@@ -125,17 +104,13 @@
                             <option value="Hiburan">🎬 Hiburan</option>
                             <option value="Lainnya">📦 Lainnya</option>
                         </select>
-                        <!-- 👆 ---------------------------------------- 👆 -->
-
                         <div class="grup-tombol-simpan">
                             <button id="btnBatalPengeluaran">Batal</button>
                             <button id="btnSimpanPengeluaran" class="btn-simpan" style="background-color:#ff8787;">Catat Pengeluaran</button>
                         </div>
                     </div>
                 </div>
-
                 <div id="halamanAkun" class="bagian-aplikasi">
-                    
                     <div class="box-peringatan" style="flex-direction: row; align-items: flex-end; gap: 10px;">
                         <div style="flex: 1; flex-direction: column; gap: 5px;">
                             <span>PIN Master</span>
@@ -143,7 +118,6 @@
                         </div>
                         <button id="btnTambahAkun" class="btn-tambah-mobile" style="width: 55px; height: 44px; flex-shrink: 0; background: #e6fcf5; border: 2px dashed #20c997; color: #087f5b; border-radius: 8px; font-size: 20px; font-weight: bold; cursor: pointer; margin: 0; padding: 0;">➕</button>
                     </div>
-                    
                     <div id="wadahInputAkun" class="wadah-input-akun">
                         <div class="input-group" style="margin-bottom: 10px;">
                             <input type="text" id="inputNamaPlatform" placeholder="Platform">
@@ -159,10 +133,8 @@
                     </div>
                 </div>
             </div>
-
             <ul id="daftarItem" class="daftar-kartu"></ul>
         </div>
-
         <div id="areaBulanan" class="kotak-utama" style="display: none;">
             <div class="header-bulanan">
                 <button id="btnKembali" class="btn-kembali" title="Kembali">⬅</button>
@@ -170,9 +142,7 @@
                 <button id="btnDownloadPDF" class="btn-simpan" style="background-color: #20c997; margin-right: 10px; height: 40px; padding: 0 15px;">PDF</button>
                 <select id="inputBulanRekap" class="input-bulan-rekap" style="cursor: pointer;"></select>
             </div>
-            
             <div id="wadahGrafik" style="display: none; margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 12px; border: 1px solid #dee2e6;">
-    
                 <div class="slider-grafik">
                     <div class="item-grafik">
                         <h4 style="text-align: center; margin-top: 0; color: #495057;">Alokasi Kategori</h4>
@@ -180,22 +150,17 @@
                             <canvas id="grafikKategori"></canvas>
                         </div>
                     </div>
-
                     <div class="item-grafik">
                         <h4 style="text-align: center; margin-top: 0; color: #495057;">Tren Harian</h4>
                         <canvas id="grafikPengeluaran"></canvas>
                     </div>
                 </div>
-
             </div>
-            
             <div id="kontenBulanan"></div>
         </div>
     </div>
 </div>
-
 <div id="overlayModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
-
 <div id="modalEdit" class="modal-kartu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
     <h3 style="margin-top: 0; color: #495057;">Edit Catatan</h3>
     <textarea id="inputEditCatatan" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box; resize: vertical; min-height: 80px;" placeholder="Isi catatan..."></textarea>
@@ -204,14 +169,10 @@
         <button id="btnSimpanEdit" style="padding: 8px 15px; border: none; border-radius: 6px; background: #20c997; cursor: pointer; color: white; font-weight:bold;">Simpan</button>
     </div>
 </div>
-
 <div id="modalEditPengeluaran" class="modal-kartu" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; background: white; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
     <h3 style="margin-top: 0; color: #495057;">Edit Pengeluaran</h3>
-    
     <input type="text" id="inputEditNamaPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;" placeholder="Nama Barang">
-    
     <input type="number" id="inputEditNominalPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;" placeholder="Harga">
-    
     <select id="inputEditKategoriPengeluaran" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ced4da; border-radius: 8px; box-sizing: border-box;">
         <option value="Makanan">🍔 Makanan & Minuman</option>
         <option value="Transportasi">🚗 Transportasi</option>
@@ -220,16 +181,12 @@
         <option value="Hiburan">🎬 Hiburan</option>
         <option value="Lainnya">📦 Lainnya</option>
     </select>
-    
     <div style="display: flex; gap: 10px; justify-content: flex-end;">
         <button id="btnBatalEditPengeluaran" style="padding: 8px 15px; border: none; border-radius: 6px; background: #e9ecef; cursor: pointer; color: #495057; font-weight:bold;">Batal</button>
         <button id="btnSimpanEditPengeluaran" style="padding: 8px 15px; border: none; border-radius: 6px; background: #ff8787; cursor: pointer; color: white; font-weight:bold;">Simpan</button>
     </div>
 </div>
-
 <div id="toastNotification" class="toast">Notifikasi</div>
-
 <script type="module" src="./modules/app.js"></script>
-
 </body>
 </html>
