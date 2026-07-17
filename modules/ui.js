@@ -29,7 +29,7 @@ export function gantiTab(tab) {
         el.wadahNavTanggal.style.display = 'flex';
         el.btnBukaSebulan.style.display = 'flex';
         el.wadahCari.style.display = tab === 'catatan' ? 'flex' : 'none';
-        el.btnBukaSebulan.innerText = tab === 'catatan' ? 'Catatan Bulan Ini' : 'Pengeluaran Bulan Ini';
+        el.btnBukaSebulan.innerText = tab === 'catatan' ? 'Catatan Bulan Ini' : '➕ Catat Pengeluaran';
     }
     renderLayarUtama();
 }
