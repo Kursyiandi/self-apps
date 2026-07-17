@@ -590,6 +590,6 @@ button {
     }
     #areaUtama > .kotak-utama {
         margin-top: 0px !important; /* Mematikan tarikan ke atas */
-        top: 15px !important; /* Memberi jarak aman saat di-scroll */
+        top: 5px !important; /* Memberi jarak aman saat di-scroll */
     }
 }
